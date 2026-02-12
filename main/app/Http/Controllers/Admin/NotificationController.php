@@ -219,6 +219,7 @@ class NotificationController extends Controller
             'custom_api_url'    => 'required_if:sms_method,custom',
             'gatewayapi_token'  => 'required_if:sms_method,gatewayapi',
             'gatewayapi_base'   => 'nullable',
+            'gatewayapi_auth'   => 'nullable|in:token,basic',
         ]);
 
         $data = [
@@ -247,6 +248,7 @@ class NotificationController extends Controller
             'gatewayapi' => [
                 'token'    => request('gatewayapi_token'),
                 'base_url' => request('gatewayapi_base') ?: 'https://gatewayapi.com',
+                'auth'     => request('gatewayapi_auth') ?: 'token',
             ],
         ];
 

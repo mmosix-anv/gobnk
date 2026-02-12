@@ -117,6 +117,20 @@
                                         <div class="col-12">
                                             <div class="row align-items-center gy-2">
                                                 <div class="col-xxl-3 col-lg-3 col-md-3">
+                                                    <label class="col-form--label">@lang('Auth Method')</label>
+                                                </div>
+                                                <div class="col-xxl-9 col-lg-9 col-md-9">
+                                                    <select class="form--control form-select" name="gatewayapi_auth">
+                                                        @php $authMethod = data_get($setting->sms_config ?? null, 'gatewayapi.auth') ?? 'token' @endphp
+                                                        <option value="token" @selected($authMethod === 'token')>@lang('Token Header')</option>
+                                                        <option value="basic" @selected($authMethod === 'basic')>@lang('Basic Auth')</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="row align-items-center gy-2">
+                                                <div class="col-xxl-3 col-lg-3 col-md-3">
                                                     <label class="col-form--label">@lang('Base URL')</label>
                                                 </div>
                                                 <div class="col-xxl-9 col-lg-9 col-md-9">

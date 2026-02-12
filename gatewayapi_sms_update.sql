@@ -4,7 +4,8 @@ SET `sms_config` = JSON_SET(
     '$.name', 'gatewayapi',
     '$.gatewayapi', JSON_OBJECT(
         'token', '-----',
-        'base_url', 'https://gatewayapi.com'
+        'base_url', 'https://gatewayapi.com',
+        'auth', 'token'
     )
 )
 WHERE `id` = 1;

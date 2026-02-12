@@ -118,7 +118,9 @@ class SmsGateway
             $payload['sender'] = $this->from;
         }
         $headers = [
-            'Authorization: Token ' . $token,
+            (isset($this->config->gatewayapi->auth) && $this->config->gatewayapi->auth === 'basic')
+                ? ('Authorization: Basic ' . base64_encode($token . ':'))
+                : ('Authorization: Token ' . $token),
             'Content-Type: application/json',
             'Accept: application/json',
         ];
