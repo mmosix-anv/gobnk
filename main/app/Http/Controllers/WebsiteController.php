@@ -19,9 +19,18 @@ class WebsiteController extends Controller
     public function home()
     {
         $pageTitle = 'Home';
-        $dpsPlans  = DepositPensionSchemePlan::active()->get();
-        $fdsPlans  = FixedDepositSchemePlan::active()->get();
-        $loanPlans = LoanPlan::active()->get();
+        try {
+            $dpsPlans  = DepositPensionSchemePlan::active()->get();
+            $fdsPlans  = FixedDepositSchemePlan::active()->get();
+            $loanPlans = LoanPlan::active()->get();
+        } catch (\Throwable $e) {
+            $dpsPlans  = collect();
+            $fdsPlans  = collect();
+            $loanPlans = collect();
+            if (config('app.debug')) {
+                report($e);
+            }
+        }
 
         return view("{$this->activeTheme}page.home", compact('pageTitle', 'dpsPlans', 'fdsPlans', 'loanPlans'));
     }
