@@ -267,7 +267,7 @@ function loadExtension($key)
 {
     $plugin = Plugin::where('act', $key)->active()->first();
     if (!$plugin) return '';
-    if ($key === 'tawk-chat' || $key === 'smartsupp-chat') {
+    if ($key === 'smartsupp-chat') {
         $shortcode = $plugin->shortcode;
         $siteKey   = isset($shortcode->key) ? ($shortcode->key->value ?? '') : '';
         if ($siteKey) {
