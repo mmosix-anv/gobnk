@@ -2,6 +2,10 @@
 
 use Illuminate\Support\Facades\Route;
 
+Route::get('/healthz', function () {
+    return response('OK', 200)->header('Content-Type', 'text/plain');
+});
+
 // CronJobs
 Route::prefix('cron')->name('cronjob.')->controller('CronjobController')->group(function () {
     Route::get('clean-temporary-uploads', 'cleanTemporaryUploads')->name('clean');
