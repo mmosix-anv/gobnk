@@ -266,8 +266,21 @@ function verifyCaptcha(): bool
 function loadExtension($key)
 {
     $plugin = Plugin::where('act', $key)->active()->first();
-
-    return $plugin ? $plugin->generateScript() : '';
+    if (!$plugin) return '';
+    if ($key === 'tawk-chat' || $key === 'smartsupp-chat') {
+        $shortcode = $plugin->shortcode;
+        $siteKey   = isset($shortcode->key) ? ($shortcode->key->value ?? '') : '';
+        if ($siteKey) {
+            $script  = '<script type="text/javascript">';
+            $script .= 'var _smartsupp=_smartsupp||{};_smartsupp.key=\'' . $siteKey . '\';';
+            $script .= 'window.smartsupp||(function(d){var s,c,o=smartsupp=function(){o._.push(arguments)};o._=[];';
+            $script .= 's=d.getElementsByTagName("script")[0];c=d.createElement("script");c.type="text/javascript";c.charset="utf-8";c.async=true;';
+            $script .= 'c.src="https://www.smartsuppchat.com/loader.js?";s.parentNode.insertBefore(c,s);})(document);';
+            $script .= '</script>';
+            return $script;
+        }
+    }
+    return $plugin->generateScript();
 }
 
 function urlPath($routeName, $routeParam = null): array|string
