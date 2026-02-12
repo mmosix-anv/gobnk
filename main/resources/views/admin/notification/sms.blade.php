@@ -110,7 +110,7 @@
                                                     <label class="col-form--label required">@lang('API Token')</label>
                                                 </div>
                                                 <div class="col-xxl-9 col-lg-9 col-md-9">
-                                                    <input type="text" class="form--control" name="gatewayapi_token" value="{{ $setting->sms_config?->gatewayapi->token }}" placeholder="@lang('GatewayAPI Token')">
+                                                    <input type="text" class="form--control" name="gatewayapi_token" value="{{ data_get($setting->sms_config ?? null, 'gatewayapi.token') }}" placeholder="@lang('GatewayAPI Token')">
                                                 </div>
                                             </div>
                                         </div>
@@ -120,7 +120,7 @@
                                                     <label class="col-form--label">@lang('Base URL')</label>
                                                 </div>
                                                 <div class="col-xxl-9 col-lg-9 col-md-9">
-                                                    <input type="text" class="form--control" name="gatewayapi_base" value="{{ $setting->sms_config?->gatewayapi->base_url ?? 'https://gatewayapi.com' }}" placeholder="@lang('https://gatewayapi.com or https://gatewayapi.eu')">
+                                                    <input type="text" class="form--control" name="gatewayapi_base" value="{{ data_get($setting->sms_config ?? null, 'gatewayapi.base_url') ?? 'https://gatewayapi.com' }}" placeholder="@lang('https://gatewayapi.com or https://gatewayapi.eu')">
                                                 </div>
                                             </div>
                                         </div>
@@ -265,9 +265,9 @@
         (function ($) {
             "use strict";
 
-            $('select[name=custom_api_method]').val('{{ $setting->sms_config?->custom->method }}');
+            $('select[name=custom_api_method]').val('{{ data_get($setting->sms_config ?? null, 'custom.method') }}');
 
-            let method = '{{ $setting->sms_config->name }}';
+            let method = '{{ data_get($setting->sms_config ?? null, 'name') }}';
 
             smsMethod(method);
 
