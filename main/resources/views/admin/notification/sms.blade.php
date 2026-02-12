@@ -8,6 +8,9 @@
                 <div class="card-body">
                     <label class="form--label required">@lang('SMS Delivery Method')</label>
                     <select class="form--control form-select" name="sms_method" required>
+                        <option value="gatewayapi" @selected($setting->sms_config?->name == 'gatewayapi')>
+                            @lang('GatewayAPI')
+                        </option>
                         <option value="nexmo" @selected($setting->sms_config?->name == 'nexmo')>
                             @lang('Nexmo')
                         </option>
@@ -16,9 +19,6 @@
                         </option>
                         <option value="custom" @selected($setting->sms_config?->name == 'custom')>
                             @lang('Custom API')
-                        </option>
-                        <option value="gatewayapi" @selected($setting->sms_config?->name == 'gatewayapi')>
-                            @lang('GatewayAPI')
                         </option>
                     </select>
                 </div>
