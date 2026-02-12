@@ -108,16 +108,20 @@ class SmsGateway
         $host  = $this->config->gatewayapi->base_url ?? 'https://gatewayapi.com';
         $token = $this->config->gatewayapi->token;
         $url   = rtrim($host, '/') . '/rest/mtsms';
-        $qs    = [
-            'message'                => $this->message,
-            'sender'                 => $this->from,
-            'recipients.0.msisdn'    => $this->to,
-            'token'                  => $token,
+        $payload = [
+            'message'    => $this->message,
+            'recipients' => [
+                ['msisdn' => $this->to],
+            ],
         ];
-        $url   = $url . '?' . http_build_query($qs);
-        $hdr   = [
-            'Accept' => 'application/json',
+        if (!empty($this->from)) {
+            $payload['sender'] = $this->from;
+        }
+        $headers = [
+            'Authorization: Token ' . $token,
+            'Content-Type: application/json',
+            'Accept: application/json',
         ];
-        CurlRequest::curlContent($url, $hdr);
+        CurlRequest::curlPostContent($url, json_encode($payload), $headers);
     }
 }
