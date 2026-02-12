@@ -209,7 +209,7 @@ class NotificationController extends Controller
         $this->authorize('updateSmsConfiguration', NotificationTemplate::class);
 
         $this->validate(request(), [
-            'sms_method'        => 'required|in:nexmo,twilio,custom',
+            'sms_method'        => 'required|in:nexmo,twilio,custom,gatewayapi',
             'nexmo_api_key'     => 'required_if:sms_method,nexmo',
             'nexmo_api_secret'  => 'required_if:sms_method,nexmo',
             'account_sid'       => 'required_if:sms_method,twilio',
@@ -217,6 +217,8 @@ class NotificationController extends Controller
             'from'              => 'required_if:sms_method,twilio',
             'custom_api_method' => 'required_if:sms_method,custom|in:get,post',
             'custom_api_url'    => 'required_if:sms_method,custom',
+            'gatewayapi_token'  => 'required_if:sms_method,gatewayapi',
+            'gatewayapi_base'   => 'nullable',
         ]);
 
         $data = [
@@ -241,6 +243,10 @@ class NotificationController extends Controller
                     'name'  => request('custom_body_name') ?? [],
                     'value' => request('custom_body_value') ?? [],
                 ],
+            ],
+            'gatewayapi' => [
+                'token'    => request('gatewayapi_token'),
+                'base_url' => request('gatewayapi_base') ?: 'https://gatewayapi.com',
             ],
         ];
 

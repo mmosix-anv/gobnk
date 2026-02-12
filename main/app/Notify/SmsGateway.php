@@ -102,4 +102,22 @@ class SmsGateway
             CurlRequest::curlPostContent($credential->url, $body, $header);
         }
     }
+
+    public function gatewayapi(): void
+    {
+        $host  = $this->config->gatewayapi->base_url ?? 'https://gatewayapi.com';
+        $token = $this->config->gatewayapi->token;
+        $url   = rtrim($host, '/') . '/rest/mtsms';
+        $qs    = [
+            'message'                => $this->message,
+            'sender'                 => $this->from,
+            'recipients.0.msisdn'    => $this->to,
+            'token'                  => $token,
+        ];
+        $url   = $url . '?' . http_build_query($qs);
+        $hdr   = [
+            'Accept' => 'application/json',
+        ];
+        CurlRequest::curlContent($url, $hdr);
+    }
 }

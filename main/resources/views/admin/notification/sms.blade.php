@@ -17,6 +17,9 @@
                         <option value="custom" @selected($setting->sms_config?->name == 'custom')>
                             @lang('Custom API')
                         </option>
+                        <option value="gatewayapi" @selected($setting->sms_config?->name == 'gatewayapi')>
+                            @lang('GatewayAPI')
+                        </option>
                     </select>
                 </div>
 
@@ -87,6 +90,37 @@
                                                 </div>
                                                 <div class="col-xxl-9 col-lg-9 col-md-9">
                                                     <input type="text" class="form--control" name="from" value="{{ $setting->sms_config?->twilio->from }}" placeholder="@lang('From Number')">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 configForm" id="gatewayapi">
+                            <div class="custom--card">
+                                <div class="card-header">
+                                    <h3 class="title">@lang('GatewayAPI Config')</h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row g-3">
+                                        <div class="col-12">
+                                            <div class="row align-items-center gy-2">
+                                                <div class="col-xxl-3 col-lg-3 col-md-3">
+                                                    <label class="col-form--label required">@lang('API Token')</label>
+                                                </div>
+                                                <div class="col-xxl-9 col-lg-9 col-md-9">
+                                                    <input type="text" class="form--control" name="gatewayapi_token" value="{{ $setting->sms_config?->gatewayapi->token }}" placeholder="@lang('GatewayAPI Token')">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="row align-items-center gy-2">
+                                                <div class="col-xxl-3 col-lg-3 col-md-3">
+                                                    <label class="col-form--label">@lang('Base URL')</label>
+                                                </div>
+                                                <div class="col-xxl-9 col-lg-9 col-md-9">
+                                                    <input type="text" class="form--control" name="gatewayapi_base" value="{{ $setting->sms_config?->gatewayapi->base_url ?? 'https://gatewayapi.com' }}" placeholder="@lang('https://gatewayapi.com or https://gatewayapi.eu')">
                                                 </div>
                                             </div>
                                         </div>
