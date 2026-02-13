@@ -20,13 +20,9 @@
         @if(isset($alerts) && $alerts->count())
             <div class="col-12">
                 @foreach($alerts as $alert)
-                    <div class="alert alert--info" role="alert">
+                    <div class="alert alert--warning" role="alert">
                         <span class="alert__title">{{ __($alert->title) }}</span>
                         <p class="alert__desc">{{ __($alert->details) }}</p>
-                        <form action="{{ route('user.alert.dismiss', $alert->id) }}" method="POST" class="d-inline">
-                            @csrf
-                            <button type="submit" class="btn btn--sm btn--warning">@lang('Dismiss')</button>
-                        </form>
                     </div>
                 @endforeach
             </div>

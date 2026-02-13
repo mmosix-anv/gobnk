@@ -51,15 +51,6 @@ class UserController extends Controller
         return view("{$this->activeTheme}user.page.dashboard", compact('pageTitle', 'kycContent', 'user', 'depositAmount', 'withdrawalAmount', 'referURL', 'recentDeposits', 'recentWithdrawals', 'alerts'));
     }
 
-    public function dismissAlert($alertId)
-    {
-        $user  = auth('web')->user();
-        $alert = $user->alerts()->where('id', $alertId)->firstOrFail();
-        $alert->status = 0;
-        $alert->save();
-        $toast[] = ['success', 'Alert dismissed'];
-        return back()->with('toasts', $toast);
-    }
 
     public function kycForm()
     {
