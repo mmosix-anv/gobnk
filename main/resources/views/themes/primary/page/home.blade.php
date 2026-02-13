@@ -22,13 +22,13 @@
                                 <a href="{{ route('user.register.form') }}" class="btn btn--base">@lang('Create Account') <i class="ti ti-arrow-up-right"></i></a>
                             @endguest
 
-                            <a href="#" class="video-btn" data-video-id="{{ __($bannerContent->data_info->youtube_video_id) }}">
+                            <!-- <a href="#" class="video-btn" data-video-id="{{ __($bannerContent->data_info->youtube_video_id) }}">
                                 <span class="video-btn__img">
                                     <span class="video-btn__shadow bg-img" data-background-image="{{ getImage($activeThemeTrue . 'images/site/banner/' . $bannerContent->data_info->video_button_background_image, '200x200') }}"></span>
                                     <i class="ti ti-player-play-filled transform-0"></i>
                                 </span>
                                 <span class="video-btn__txt">Watch Video</span>
-                            </a>
+                            </a> -->
                         </div>
                     </div>
                 </div>
@@ -47,14 +47,8 @@
     @include("{$activeTheme}sections.whyChooseUs")
     @include("{$activeTheme}sections.process")
     @include("{$activeTheme}sections.features")
-    @include("{$activeTheme}sections.dps")
-    @include("{$activeTheme}sections.fds")
-    @include("{$activeTheme}sections.loan")
     @include("{$activeTheme}sections.faq")
-    @include("{$activeTheme}sections.testimonials")
-    @include("{$activeTheme}sections.counters")
     @include("{$activeTheme}sections.subscribe")
-    @include("{$activeTheme}sections.partners")
 @endsection
 
 @push('page-style-lib')

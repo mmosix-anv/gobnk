@@ -17,7 +17,7 @@ use Illuminate\Support\Str;
 
 function systemDetails(): array
 {
-    $system['name']          = 'TonaBank';
+    $system['name']          = 'Bank';
     $system['version']       = '1.0';
     $system['build_version'] = '0.0.1';
 
