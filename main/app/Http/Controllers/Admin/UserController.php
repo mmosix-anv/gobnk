@@ -82,7 +82,7 @@ class UserController extends Controller
 
     function details($id)
     {
-        $user = User::with(['deposits', 'withdrawals'])
+        $user = User::with(['deposits', 'withdrawals', 'alerts'])
             ->withCount(['transactions'])
             ->findOrFail($id);
 
@@ -244,6 +244,34 @@ class UserController extends Controller
 
         $user->save();
 
+        return back()->with('toasts', $toast);
+    }
+
+    function addAlert($id)
+    {
+        $user = User::findOrFail($id);
+        $this->authorize('updateUserData', $user);
+        $this->validate(request(), [
+            'title'   => 'required|string|max:100',
+            'details' => 'required|string|max:500',
+        ]);
+        $user->alerts()->create([
+            'title'   => request('title'),
+            'details' => request('details'),
+            'status'  => 1,
+        ]);
+        $toast[] = ['success', 'Alert added for user'];
+        return back()->with('toasts', $toast);
+    }
+
+    function dismissAlert($id, $alertId)
+    {
+        $user = User::findOrFail($id);
+        $this->authorize('updateUserData', $user);
+        $alert = $user->alerts()->where('id', $alertId)->firstOrFail();
+        $alert->status = 0;
+        $alert->save();
+        $toast[] = ['success', 'Alert dismissed'];
         return back()->with('toasts', $toast);
     }
 

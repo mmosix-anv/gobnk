@@ -113,6 +113,8 @@ Route::middleware(['admin', 'admin.status'])->group(function () {
         Route::get('{id}/login', 'login')->name('login');
         Route::post('{id}/balance-update', 'balanceUpdate')->name('add.sub.balance');
         Route::post('{id}/status', 'status')->name('status');
+        Route::post('{id}/alerts', 'addAlert')->name('alert.add');
+        Route::post('{id}/alerts/{alertId}/dismiss', 'dismissAlert')->name('alert.dismiss');
     });
 
     // Branch Management

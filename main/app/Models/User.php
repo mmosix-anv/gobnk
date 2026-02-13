@@ -139,6 +139,12 @@ class User extends Authenticatable
         return $this->hasMany(User::class, 'ref_by', 'id');
     }
 
+    public function alerts(): HasMany
+    {
+        return $this->hasMany(UserAlert::class);
+    }
+
+
     /**
      * Get the branch that owns the user.
      */

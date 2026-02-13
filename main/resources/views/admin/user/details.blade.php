@@ -262,6 +262,54 @@
                 </div>
             </div>
         </div>
+    <div class="col-12">
+        <div class="custom--card">
+            <div class="card-header">
+                <h3 class="title">@lang('Custom Notifications')</h3>
+            </div>
+            <form action="{{ route('admin.user.alert.add', $user->id) }}" method="POST">
+                @csrf
+                <div class="card-body">
+                    <div class="row gy-3">
+                        <div class="col-md-4">
+                            <label class="col-form--label required">@lang('Alert Header')</label>
+                            <input type="text" class="form--control" name="title" placeholder="@lang('Enter alert header')" required>
+                        </div>
+                        <div class="col-md-8">
+                            <label class="col-form--label required">@lang('Alert Details')</label>
+                            <input type="text" class="form--control" name="details" placeholder="@lang('Enter alert details')" required>
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn--base px-4">@lang('Add Alert')</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <div class="card-body border-top">
+                <div class="row gy-3">
+                    @forelse($user->alerts as $alert)
+                        <div class="col-12">
+                            <div class="alert {{ $alert->status ? 'alert--info' : 'alert--secondary' }}" role="alert">
+                                <span class="alert__title">{{ __($alert->title) }}</span>
+                                <p class="alert__desc">{{ __($alert->details) }}</p>
+                                @if($alert->status)
+                                    <form action="{{ route('admin.user.alert.dismiss', [$user->id, $alert->id]) }}" method="POST" class="d-inline">
+                                        @csrf
+                                        <button type="submit" class="btn btn--sm btn--warning">@lang('Dismiss')</button>
+                                    </form>
+                                @endif
+                            </div>
+                        </div>
+                    @empty
+                        <div class="col-12">
+                            @include('partials.noData')
+                        </div>
+                    @endforelse
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
     </div>
 
     <div class="col-12">

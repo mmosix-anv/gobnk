@@ -47,6 +47,7 @@ Route::middleware('auth')->name('user.')->group(function () {
             Route::controller('UserController')->group(function () {
                 // Dashboard
                 Route::get('dashboard', 'home')->name('home');
+                Route::post('alerts/{alertId}/dismiss', 'dismissAlert')->name('alert.dismiss');
 
                 // KYC Check
                 Route::prefix('kyc')->name('kyc.')->group(function () {
