@@ -209,7 +209,7 @@ class NotificationController extends Controller
         $this->authorize('updateSmsConfiguration', NotificationTemplate::class);
 
         $this->validate(request(), [
-            'sms_method'        => 'required|in:nexmo,twilio,custom,gatewayapi',
+            'sms_method'        => 'required|in:nexmo,twilio,custom,gatewayapi,seven',
             'nexmo_api_key'     => 'required_if:sms_method,nexmo',
             'nexmo_api_secret'  => 'required_if:sms_method,nexmo',
             'account_sid'       => 'required_if:sms_method,twilio',

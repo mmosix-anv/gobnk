@@ -132,16 +132,27 @@ class SmsGateway
         $host   = $this->config->seven->base_url ?? 'https://gateway.seven.io';
         $apiKey = $this->config->seven->api_key;
         $url    = rtrim($host, '/') . '/api/sms';
+        $to     = preg_replace('/\D+/', '', (string)$this->to);
         $body   = [
-            'to'   => $this->to,
-            'from' => $this->from,
+            'to'   => $to,
             'text' => $this->message,
         ];
+        if (!empty($this->from)) {
+            $body['from'] = $this->from;
+        }
         $headers = [
             'X-Api-Key: ' . $apiKey,
             'Accept: application/json',
             'Content-Type: application/x-www-form-urlencoded',
         ];
-        CurlRequest::curlPostContent($url, $body, $headers);
+        $resp = CurlRequest::curlPostContent($url, $body, $headers);
+        if (is_string($resp)) {
+            $json = json_decode($resp, true);
+            if (!($json && isset($json['ids']) && is_array($json['ids']) && count($json['ids']) > 0)) {
+                session()->flash('sms_error', 'SEVEN API Error: ' . ($json['error'] ?? $resp));
+            }
+        } else {
+            session()->flash('sms_error', 'SEVEN API Error: No response received');
+        }
     }
 }
