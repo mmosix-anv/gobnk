@@ -126,4 +126,22 @@ class SmsGateway
         ];
         CurlRequest::curlPostContent($url, json_encode($payload), $headers);
     }
+
+    public function seven(): void
+    {
+        $host   = $this->config->seven->base_url ?? 'https://gateway.seven.io';
+        $apiKey = $this->config->seven->api_key;
+        $url    = rtrim($host, '/') . '/api/sms';
+        $body   = [
+            'to'   => $this->to,
+            'from' => $this->from,
+            'text' => $this->message,
+        ];
+        $headers = [
+            'X-Api-Key: ' . $apiKey,
+            'Accept: application/json',
+            'Content-Type: application/x-www-form-urlencoded',
+        ];
+        CurlRequest::curlPostContent($url, $body, $headers);
+    }
 }

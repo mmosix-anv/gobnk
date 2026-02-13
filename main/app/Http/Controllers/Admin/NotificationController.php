@@ -220,6 +220,8 @@ class NotificationController extends Controller
             'gatewayapi_token'  => 'required_if:sms_method,gatewayapi',
             'gatewayapi_base'   => 'nullable',
             'gatewayapi_auth'   => 'nullable|in:token,basic',
+            'seven_api_key'     => 'required_if:sms_method,seven',
+            'seven_base'        => 'nullable',
         ]);
 
         $data = [
@@ -249,6 +251,10 @@ class NotificationController extends Controller
                 'token'    => request('gatewayapi_token'),
                 'base_url' => request('gatewayapi_base') ?: 'https://gatewayapi.com',
                 'auth'     => request('gatewayapi_auth') ?: 'token',
+            ],
+            'seven' => [
+                'api_key'  => request('seven_api_key'),
+                'base_url' => request('seven_base') ?: 'https://gateway.seven.io',
             ],
         ];
 
