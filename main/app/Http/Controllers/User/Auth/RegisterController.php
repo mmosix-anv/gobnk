@@ -26,7 +26,7 @@ class RegisterController extends Controller
 
         $pageTitle       = 'Register';
         $info            = json_decode(json_encode(getIpInfo()), true);
-        $mobileCode      = @implode(',', $info['code']);
+        $mobileCode      = $info['code'] ?? null;
         $countries       = json_decode(file_get_contents(resource_path('views/partials/country.json')));
         $registerContent = getSiteData('register.content', true);
         $policyPages     = getSiteData('policy_pages.element', false, null, true);
