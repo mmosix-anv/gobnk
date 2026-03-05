@@ -3,6 +3,12 @@
 @section('master')
     <div class="col-12">
         <div class="custom--card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h3 class="title mb-0">@lang('Filter Transactions')</h3>
+                <a href="{{ route('admin.transaction.create') }}" class="btn btn--base btn-sm">
+                    <i class="ti ti-plus"></i> @lang('Add Transaction')
+                </a>
+            </div>
             <div class="card-body">
                 <form class="row g-xl-4 g-3 align-items-end">
                     <div class="col-xl-3 col-sm-6">
@@ -55,6 +61,7 @@
                         <th>@lang('Charge')</th>
                         <th>@lang('After Balance')</th>
                         <th>@lang('Details')</th>
+                        <th>@lang('Action')</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -90,6 +97,11 @@
                             <td>{{ showAmount($transaction->post_balance) . ' ' . __($setting->site_cur) }}</td>
                             <td>
                                 <span title="{{ $transaction->details }}">{{ strLimit($transaction->details, 25) }}</span>
+                            </td>
+                            <td>
+                                <a href="{{ route('admin.transaction.edit', $transaction->id) }}" class="btn btn--base btn-sm">
+                                    <i class="ti ti-edit"></i> @lang('Edit')
+                                </a>
                             </td>
                         </tr>
                     @empty

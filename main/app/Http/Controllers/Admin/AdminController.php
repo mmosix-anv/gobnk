@@ -271,6 +271,108 @@ class AdminController extends Controller
         return view('admin.page.transaction', compact('pageTitle', 'transactions', 'remarks'));
     }
 
+    public function transactionCreate()
+    {
+        $this->authorize('manageTransactions', Admin::class);
+
+        $pageTitle = 'Add Transaction';
+        $users     = User::active()->orderBy('username')->get(['id', 'username', 'firstname', 'lastname', 'balance']);
+
+        return view('admin.page.transaction_form', compact('pageTitle', 'users'));
+    }
+
+    public function transactionStore()
+    {
+        $this->authorize('manageTransactions', Admin::class);
+
+        $this->validate(request(), [
+            'user_id'      => 'required|exists:users,id',
+            'amount'       => 'required|numeric|gt:0',
+            'trx_type'     => 'required|in:+,-',
+            'remark'       => 'required|string|max:40',
+            'details'      => 'required|string|max:255',
+            'created_at'   => 'nullable|date|before_or_equal:today',
+        ]);
+
+        $user   = User::findOrFail(request('user_id'));
+        $amount = request('amount');
+        $trx    = getTrx();
+
+        $transaction = new Transaction();
+
+        if (request('trx_type') == '+') {
+            $user->balance         += $amount;
+            $transaction->trx_type = '+';
+        } else {
+            if ($amount > $user->balance) {
+                $toast[] = ['error', 'User doesn\'t have sufficient balance'];
+                return back()->with('toasts', $toast)->withInput();
+            }
+            $user->balance         -= $amount;
+            $transaction->trx_type = '-';
+        }
+
+        $user->save();
+
+        $transaction->user_id      = $user->id;
+        $transaction->amount       = $amount;
+        $transaction->post_balance = $user->balance;
+        $transaction->charge       = 0;
+        $transaction->trx          = $trx;
+        $transaction->remark       = request('remark');
+        $transaction->details      = request('details');
+        
+        // Set created_at to backdated date if provided, otherwise use current time
+        if (request('created_at')) {
+            $transaction->created_at = request('created_at');
+        }
+        
+        $transaction->save();
+
+        $toast[] = ['success', 'Transaction added successfully'];
+
+        return redirect()->route('admin.transaction.index')->with('toasts', $toast);
+    }
+
+    public function transactionEdit($id)
+    {
+        $this->authorize('manageTransactions', Admin::class);
+
+        $pageTitle   = 'Edit Transaction';
+        $transaction = Transaction::with('user')->findOrFail($id);
+        $users       = User::active()->orderBy('username')->get(['id', 'username', 'firstname', 'lastname', 'balance']);
+
+        return view('admin.page.transaction_form', compact('pageTitle', 'transaction', 'users'));
+    }
+
+    public function transactionUpdate($id)
+    {
+        $this->authorize('manageTransactions', Admin::class);
+
+        $transaction = Transaction::findOrFail($id);
+
+        $this->validate(request(), [
+            'remark'     => 'required|string|max:40',
+            'details'    => 'required|string|max:255',
+            'created_at' => 'nullable|date|before_or_equal:today',
+        ]);
+
+        $transaction->remark  = request('remark');
+        $transaction->details = request('details');
+
+        // Update created_at if backdating
+        if (request('created_at')) {
+            $transaction->created_at = request('created_at');
+        }
+
+        $transaction->save();
+
+        $toast[] = ['success', 'Transaction updated successfully'];
+
+        return redirect()->route('admin.transaction.index')->with('toasts', $toast);
+    }
+
+
     public function fileDownload()
     {
         $this->authorize('downloadFile', Admin::class);

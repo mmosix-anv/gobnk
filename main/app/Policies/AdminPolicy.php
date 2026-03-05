@@ -41,6 +41,12 @@ class AdminPolicy
         return $admin->can('view all transactions');
     }
 
+    public function manageTransactions(Admin $admin): bool
+    {
+        return $admin->can('manage transactions');
+    }
+
+
     public function downloadFile(Admin $admin): bool
     {
         return $admin->can('download user file');

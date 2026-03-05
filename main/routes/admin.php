@@ -44,6 +44,10 @@ Route::middleware(['admin', 'admin.status'])->group(function () {
 
         // Transactions
         Route::get('transaction', 'transaction')->name('transaction.index');
+        Route::get('transaction/create', 'transactionCreate')->name('transaction.create');
+        Route::post('transaction/store', 'transactionStore')->name('transaction.store');
+        Route::get('transaction/{id}/edit', 'transactionEdit')->name('transaction.edit');
+        Route::post('transaction/{id}/update', 'transactionUpdate')->name('transaction.update');
 
         // File Download
         Route::get('file-download', 'fileDownload')->name('file.download');
