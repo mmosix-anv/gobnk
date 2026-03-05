@@ -291,7 +291,7 @@ class AdminController extends Controller
             'trx_type'     => 'required|in:+,-',
             'remark'       => 'required|string|max:40',
             'details'      => 'required|string|max:255',
-            'created_at'   => 'nullable|date|before_or_equal:today',
+            'created_at'   => 'nullable|date|before_or_equal:now',
         ]);
 
         $user   = User::findOrFail(request('user_id'));
@@ -354,7 +354,7 @@ class AdminController extends Controller
         $this->validate(request(), [
             'remark'     => 'required|string|max:40',
             'details'    => 'required|string|max:255',
-            'created_at' => 'nullable|date|before_or_equal:today',
+            'created_at' => 'nullable|date|before_or_equal:now',
         ]);
 
         $transaction->remark  = request('remark');

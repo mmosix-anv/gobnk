@@ -67,12 +67,11 @@
                         </div>
 
                         <div class="col-md-6">
-                            <label class="form--label">@lang('Transaction Date')</label>
-                            <input type="text" class="form--control datepicker-here" name="created_at" 
-                                value="{{ old('created_at', isset($transaction) ? $transaction->created_at->format('Y-m-d') : '') }}" 
-                                data-language="en" 
-                                data-date-format="yyyy-mm-dd"
-                                placeholder="@lang('Select Date (Optional)')" 
+                            <label class="form--label">@lang('Transaction Date & Time')</label>
+                            <input type="datetime-local" class="form--control" name="created_at" 
+                                value="{{ old('created_at', isset($transaction) ? $transaction->created_at->format('Y-m-d\TH:i') : '') }}" 
+                                max="{{ now()->format('Y-m-d\TH:i') }}"
+                                placeholder="@lang('Select Date & Time (Optional)')" 
                                 autocomplete="off">
                             <small class="text-muted">@lang('Leave empty to use current date/time')</small>
                         </div>
@@ -98,30 +97,15 @@
     </div>
 @endsection
 
-@push('page-style-lib')
-    <link rel="stylesheet" href="{{ asset('assets/universal/css/datepicker.css') }}">
-@endpush
-
-@push('page-script-lib')
-    <script src="{{ asset('assets/universal/js/datepicker.js') }}"></script>
-    <script src="{{ asset('assets/universal/js/datepicker.en.js') }}"></script>
-@endpush
-
 @push('page-script')
     <script>
         (function ($) {
             "use strict"
 
-            let datePicker = $('.datepicker-here')
-
-            datePicker.datepicker({
-                maxDate: new Date(),
-                autoClose: true
-            })
-
-            datePicker.on('input keyup keydown keypress', function () {
-                return false
-            })
+            // Set max datetime to current datetime
+            const now = new Date();
+            const maxDateTime = now.toISOString().slice(0, 16);
+            $('input[name="created_at"]').attr('max', maxDateTime);
         })(jQuery)
     </script>
 @endpush

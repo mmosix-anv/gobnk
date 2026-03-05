@@ -8,12 +8,12 @@ This feature allows administrators to manually add and edit transactions with th
 - Admins can create transactions for any active user
 - Select transaction type: Credit (+) or Debit (-)
 - Specify amount, remark, and details
-- **Backdate transactions** by selecting a past date (optional)
-- If no date is selected, current date/time is used
+- **Backdate transactions** by selecting a past date and time (optional)
+- If no date/time is selected, current date/time is used
 
 ### 2. Edit Existing Transaction
 - Admins can edit transaction remark and details
-- **Update transaction date** to backdate or correct the date
+- **Update transaction date and time** to backdate or correct the timestamp
 - Amount, type, and user cannot be changed (for audit integrity)
 
 ### 3. Transaction Listing
@@ -40,7 +40,8 @@ This feature allows administrators to manually add and edit transactions with th
 ### Views
 - `main/resources/views/admin/page/transaction_form.blade.php` (NEW)
   - Form for adding/editing transactions
-  - Date picker with max date validation (cannot select future dates)
+  - HTML5 datetime-local picker with max datetime validation (cannot select future dates/times)
+  - Displays existing created_at value when editing
   
 - `main/resources/views/admin/page/transaction.blade.php` (MODIFIED)
   - Added "Add Transaction" button
@@ -87,7 +88,7 @@ This feature allows administrators to manually add and edit transactions with th
    - Enter amount
    - Enter remark (max 40 characters)
    - Enter details (max 255 characters)
-   - **Optional:** Select a past date to backdate the transaction
+   - **Optional:** Select a past date and time to backdate the transaction
 4. Click "Save Transaction"
 
 ### Editing a Transaction
@@ -97,7 +98,7 @@ This feature allows administrators to manually add and edit transactions with th
 3. Modify:
    - Remark
    - Details
-   - **Transaction date** (to backdate or correct)
+   - **Transaction date and time** (to backdate or correct)
 4. Click "Save Transaction"
 
 ## Permissions
@@ -108,7 +109,7 @@ This feature allows administrators to manually add and edit transactions with th
 ## Security Notes
 
 - Only admins with "manage transactions" permission can add/edit
-- Cannot select future dates (validation enforced)
+- Cannot select future dates/times (validation enforced on both client and server side)
 - User balance is updated automatically when adding transactions
 - Debit transactions validate sufficient balance
 - Transaction amount and type cannot be changed after creation (audit trail)
@@ -121,9 +122,9 @@ This feature allows administrators to manually add and edit transactions with th
 - `trx_type`: Required, must be '+' or '-'
 - `remark`: Required, string, max 40 characters
 - `details`: Required, string, max 255 characters
-- `created_at`: Optional, date, must be today or earlier
+- `created_at`: Optional, datetime, must be now or earlier
 
 ### Edit Transaction
 - `remark`: Required, string, max 40 characters
 - `details`: Required, string, max 255 characters
-- `created_at`: Optional, date, must be today or earlier
+- `created_at`: Optional, datetime, must be now or earlier
