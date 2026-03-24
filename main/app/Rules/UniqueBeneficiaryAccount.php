@@ -20,12 +20,19 @@ class UniqueBeneficiaryAccount implements ValidationRule
     {
         $accountExists = Beneficiary::where('user_id', $this->userId)
             ->where(function (Builder $query) use ($value) {
-                $query->whereJsonContains('details', ['account_number' => $value])
-                    ->orWhere(function (Builder $q) use ($value) {
-                        $q->whereRaw('JSON_CONTAINS(details, ?)', [
-                            json_encode(['value' => $value])
-                        ]);
-                    });
+                // Check for own_bank beneficiaries (details is object with account_number key)
+                $query->orWhere(function (Builder $q) use ($value) {
+                    $q->whereRaw('JSON_CONTAINS(details, ?, "$")', [
+                        json_encode(['account_number' => $value])
+                    ]);
+                });
+
+                // Check for other_bank beneficiaries (details is array of objects with name/value)
+                $query->orWhere(function (Builder $q) use ($value) {
+                    $q->whereRaw('JSON_CONTAINS(details, ?, "$[*].value")', [
+                        json_encode($value)
+                    ]);
+                });
             })
             ->when($this->beneficiaryId, function (Builder $query) {
                 $query->whereNot('id', $this->beneficiaryId);

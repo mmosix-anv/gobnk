@@ -38,22 +38,50 @@ class BeneficiaryRequest extends FormRequest
      */
     public function rules(): array
     {
-        // Predefined validation rules
+        // Base validation rules
         $rules = [
             'beneficiary_type' => 'required|string|in:own_bank,other_bank',
-            'other_bank'       => 'required_if:beneficiary_type,other_bank|integer',
-            'account_number'   => ['required', 'string', new UniqueBeneficiaryAccount(auth('web')->id(), $this->beneficiary?->id)],
-            'account_name'     => 'required|string|max:255',
+            'other_bank'       => 'required_if:beneficiary_type,other_bank|integer|exists:other_banks,id',
             'short_name'       => 'required|string|max:40',
         ];
 
+        // Handle account number validation based on beneficiary type
+        if ($this->input('beneficiary_type') === 'own_bank') {
+            // For own bank: account_number is a user account number that must exist
+            $rules['account_number'] = [
+                'required',
+                'string',
+                function ($attribute, $value, $fail) {
+                    $user = \App\Models\User::where('account_number', $value)
+                        ->whereNot('id', auth('web')->id())
+                        ->active()
+                        ->first();
+
+                    if (!$user) {
+                        $fail('The selected account number does not exist or is invalid.');
+                    }
+                },
+                new UniqueBeneficiaryAccount(auth('web')->id(), $this->beneficiary?->id)
+            ];
+        } elseif ($this->input('beneficiary_type') === 'other_bank') {
+            // For other bank: account_number is a text input that must be unique
+            $rules['account_number'] = [
+                'required',
+                'string',
+                new UniqueBeneficiaryAccount(auth('web')->id(), $this->beneficiary?->id)
+            ];
+
+            // Account name is required for other bank
+            $rules['account_name'] = 'required|string|max:255';
+        }
+
         // Dynamically add rules if 'other_bank' is filled
         if ($this->filled('other_bank')) {
-            $otherBank = OtherBank::with('form')->active()->findOrFail($this->input('other_bank'));
+            $otherBank = \App\Models\OtherBank::with('form')->active()->findOrFail($this->input('other_bank'));
             $formData  = $otherBank->form->form_data;
 
             // Get dynamic validation rules from the FormProcessor
-            $dynamicRules = (new FormProcessor)->valueValidation($formData);
+            $dynamicRules = (new \App\Lib\FormProcessor)->valueValidation($formData);
 
             if ($this->input('beneficiary_type') === 'other_bank') {
                 // For external bank, use both label and snake-cased labels to avoid form-name mismatch.
@@ -61,7 +89,7 @@ class BeneficiaryRequest extends FormRequest
 
                 foreach ($dynamicRules as $field => $rule) {
                     $fallbackDynamicRules[$field] = $rule;
-                    $snakeField = titleToKey($field);
+                    $snakeField = \App\Http\Helpers\helpers::titleToKey($field);
 
                     if ($snakeField !== $field) {
                         $fallbackDynamicRules[$snakeField] = $rule;
