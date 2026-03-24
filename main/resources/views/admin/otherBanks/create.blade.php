@@ -8,11 +8,15 @@
                 <div class="custom--card">
                     <div class="card-body">
                         <div class="row g-lg-4 g-3">
-                            <div class="col-sm-6">
+                            <div class="col-sm-4">
                                 <label class="form--label required">@lang('Name')</label>
                                 <input type="text" class="form--control" name="name" value="{{ old('name') }}" required>
                             </div>
-                            <div class="col-sm-6">
+                            <div class="col-sm-4">
+                                <label class="form--label required">@lang('Country')</label>
+                                <input type="text" class="form--control" name="country" value="{{ old('country') }}" required>
+                            </div>
+                            <div class="col-sm-4">
                                 <label class="form--label required">@lang('Processing Time')</label>
                                 <input type="text" class="form--control" name="processing_time" value="{{ old('processing_time') }}" required>
                             </div>

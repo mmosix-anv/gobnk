@@ -60,6 +60,7 @@ class OtherBankRequest extends FormRequest
 
         return array_merge([
             'name'                           => "required|string|max:40|unique:other_banks,name,$otherBankId",
+            'country'                        => 'required|string|max:255',
             'per_transaction_min_amount'     => 'bail|required|numeric|gt:0',
             'per_transaction_max_amount'     => 'bail|required|numeric|gt:per_transaction_min_amount',
             'daily_transaction_max_amount'   => 'bail|required|numeric|gt:per_transaction_max_amount',

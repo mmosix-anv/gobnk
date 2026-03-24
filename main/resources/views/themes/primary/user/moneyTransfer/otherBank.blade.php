@@ -71,17 +71,18 @@
                         @csrf
                         <input type="hidden" name="beneficiary_type" value="other_bank">
                         <div class="form-group">
+                            <label for="addCountry" class="form--label required">@lang('Country')</label>
+                            <select id="addCountry" class="form--control form--control--sm form-select select-2" name="country" required>
+                                <option selected disabled>@lang('Select Country')</option>
+                                @foreach($otherBanks as $country => $banks)
+                                    <option value="{{ $country }}">{{ __($country) }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group mt-3">
                             <label for="addOtherBank" class="form--label required">@lang('Other Bank')</label>
                             <select id="addOtherBank" class="form--control form--control--sm form-select select-2" name="other_bank" required>
-                                @if(count($otherBanks) > 0)
-                                    <option selected disabled>@lang('Select One')</option>
-
-                                    @foreach($otherBanks as $otherBank)
-                                        <option value="{{ $otherBank->id }}">{{ __($otherBank->name) }}</option>
-                                    @endforeach
-                                @else
-                                    <option selected disabled>@lang('No Bank Found')</option>
-                                @endif
+                                <option selected disabled>@lang('Select Country First')</option>
                             </select>
                         </div>
                         <div id="addDynamicFields"></div>
@@ -301,6 +302,21 @@
             }
 
             $(function () {
+                const otherBanks = @json($otherBanks);
+
+                $('#addCountry').on('change', function () {
+                    const country = $(this).val();
+                    const bankSelect = $('#addOtherBank');
+                    bankSelect.empty().append('<option selected disabled>@lang("Select One")</option>');
+
+                    if (otherBanks[country]) {
+                        otherBanks[country].forEach(bank => {
+                            bankSelect.append(`<option value="${bank.id}">${bank.name}</option>`);
+                        });
+                    }
+                    bankSelect.trigger('change');
+                });
+
                 $('#addOtherBank').on('change', function () {
                     const otherBank = $(this).find(':selected').val()
 

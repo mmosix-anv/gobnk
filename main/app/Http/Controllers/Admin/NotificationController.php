@@ -215,7 +215,7 @@ class NotificationController extends Controller
             'account_sid'       => 'required_if:sms_method,twilio',
             'auth_token'        => 'required_if:sms_method,twilio',
             'from'              => 'required_if:sms_method,twilio',
-            'custom_api_method' => 'required_if:sms_method,custom|in:get,post',
+            'custom_api_method' => 'nullable|in:get,post',
             'custom_api_url'    => 'required_if:sms_method,custom',
             'gatewayapi_token'  => 'required_if:sms_method,gatewayapi',
             'gatewayapi_base'   => 'nullable',
@@ -258,7 +258,7 @@ class NotificationController extends Controller
             ],
         ];
 
-        $setting             = bs();
+        $setting             = \App\Models\Setting::first();
         $setting->sms_config = $data;
         $setting->save();
 

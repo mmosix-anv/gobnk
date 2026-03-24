@@ -7,6 +7,7 @@
                 <thead>
                     <tr>
                         <th>@lang('Name') | @lang('Processing Time')</th>
+                        <th>@lang('Country')</th>
                         <th>@lang('Per Transaction')</th>
                         <th>@lang('Daily Transaction')</th>
                         <th>@lang('Monthly Transaction')</th>
@@ -27,6 +28,9 @@
                                     <p class="fw-semibold text--base">{{ __($otherBank->name) }}</p>
                                     <p>{{ __($otherBank->processing_time) }}</p>
                                 </div>
+                            </td>
+                            <td>
+                                <p>{{ __($otherBank->country) }}</p>
                             </td>
                             <td>
                                 <div>

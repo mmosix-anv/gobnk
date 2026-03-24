@@ -18,7 +18,7 @@ class PhinixForm extends Component
      *
      * @return void
      */
-    public function __construct($identifier, $identifierValue)
+    public function __construct(string $identifier, string $identifierValue)
     {
         $this->identifier      = $identifier;
         $this->identifierValue = $identifierValue;

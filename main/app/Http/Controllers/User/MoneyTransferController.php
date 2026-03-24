@@ -205,7 +205,7 @@ class MoneyTransferController extends Controller
             return $beneficiary;
         });
 
-        $otherBanks = OtherBank::with('form')->active()->orderBy('name')->get();
+        $otherBanks = OtherBank::with('form')->active()->orderBy('country')->orderBy('name')->get()->groupBy('country');
 
         return view("{$this->activeTheme}user.moneyTransfer.otherBank", compact('pageTitle', 'user', 'beneficiaries', 'otherBanks'));
     }

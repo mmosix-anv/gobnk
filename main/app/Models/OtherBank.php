@@ -19,6 +19,7 @@ class OtherBank extends Model
      */
     protected $fillable = [
         'name',
+        'country',
         'per_transaction_min_amount',
         'per_transaction_max_amount',
         'daily_transaction_max_amount',
