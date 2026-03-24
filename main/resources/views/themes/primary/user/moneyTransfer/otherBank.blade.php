@@ -314,7 +314,8 @@
                             bankSelect.append(`<option value="${bank.id}">${bank.name}</option>`);
                         });
                     }
-                    bankSelect.trigger('change');
+                    // Clear dynamic fields when country changes
+                    $('#addDynamicFields').html('');
                 });
 
                 $('#addOtherBank').on('change', function () {
