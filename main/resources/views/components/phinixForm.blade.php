@@ -15,21 +15,22 @@
     @php
         $data = (object) (array) $data;
         $name = $data->name ?? $data->label ?? '';
-        $label = isset($data->name) ? $data->label : titleToKey($data->label ?? '');
+        $fieldName = titleToKey($data->name ?? $data->label ?? '');
+        $label = $data->label ?? titleToKey($data->name ?? '');
     @endphp
     <div class="{{ $wrapperClass }}">
         <label @class(['form--label', 'required' => ($data->is_required ?? '') == 'required'])>{{ __($name) }}</label>
 
         @if (($data->type ?? '') == 'text')
-            <input type="text" class="{{ $formControlClass }}" name="{{ $label }}" value="{{ old($label) }}" @required(($data->is_required ?? '') == 'required')>
+            <input type="text" class="{{ $formControlClass }}" name="{{ $fieldName }}" value="{{ old($fieldName) }}" @required(($data->is_required ?? '') == 'required')>
         @elseif (($data->type ?? '') == 'textarea')
-            <textarea class="{{ $formControlClass }}" name="{{ $label }}" rows="10" @required(($data->is_required ?? '') == 'required')>{{ old($label) }}</textarea>
+            <textarea class="{{ $formControlClass }}" name="{{ $fieldName }}" rows="10" @required(($data->is_required ?? '') == 'required')>{{ old($fieldName) }}</textarea>
         @elseif (($data->type ?? '') == 'select')
-            <select class="{{ $formControlClass . ' ' . $selectFieldClass }}" name="{{ $label }}" @required(($data->is_required ?? '') == 'required')>
+            <select class="{{ $formControlClass . ' ' . $selectFieldClass }}" name="{{ $fieldName }}" @required(($data->is_required ?? '') == 'required')>
                 <option selected disabled>@lang('Select One')</option>
 
                 @foreach ($data->options ?? [] as $item)
-                    <option value="{{ $item }}" @selected($item == old($label))>
+                    <option value="{{ $item }}" @selected($item == old($fieldName))>
                         {{ __($item) }}
                     </option>
                 @endforeach
@@ -38,8 +39,8 @@
             <div class="d-flex flex-wrap gap-3">
                 @foreach ($data->options ?? [] as $option)
                     <div class="form--check">
-                        <input type="checkbox" class="form-check-input" name="{{ $label }}[]" value="{{ $option }}" id="{{ $label }}_{{ titleToKey($option) }}" @checked(in_array($option, old($label, [])))>
-                        <label for="{{ $label }}_{{ titleToKey($option) }}" class="form-check-label">{{ $option }}</label>
+                        <input type="checkbox" class="form-check-input" name="{{ $fieldName }}[]" value="{{ $option }}" id="{{ $fieldName }}_{{ titleToKey($option) }}" @checked(in_array($option, old($fieldName, [])))>
+                        <label for="{{ $fieldName }}_{{ titleToKey($option) }}" class="form-check-label">{{ $option }}</label>
                     </div>
                 @endforeach
             </div>
@@ -47,26 +48,26 @@
             <div class="d-flex flex-wrap gap-3">
                 @foreach ($data->options ?? [] as $option)
                     <div class="form--check">
-                        <input type="radio" class="form-check-input" name="{{ $label }}" value="{{ $option }}" id="{{ $label }}_{{ titleToKey($option) }}" @checked($option == old($label))>
-                        <label for="{{ $label }}_{{ titleToKey($option) }}" class="form-check-label">{{ $option }}</label>
+                        <input type="radio" class="form-check-input" name="{{ $fieldName }}" value="{{ $option }}" id="{{ $fieldName }}_{{ titleToKey($option) }}" @checked($option == old($fieldName))>
+                        <label for="{{ $fieldName }}_{{ titleToKey($option) }}" class="form-check-label">{{ $option }}</label>
                     </div>
                 @endforeach
             </div>
         @elseif (($data->type ?? '') == 'file')
-            <input type="file" class="{{ $formControlClass }}" name="{{ $label }}" @required(($data->is_required ?? '') == 'required') accept="@foreach (explode(',', $data->extensions ?? '') as $ext) {{ ".$ext" }}@if (!$loop->last), @endif @endforeach">
+            <input type="file" class="{{ $formControlClass }}" name="{{ $fieldName }}" @required(($data->is_required ?? '') == 'required') accept="@foreach (explode(',', $data->extensions ?? '') as $ext) {{ ".".$ext }}@if (!$loop->last), @endif @endforeach">
             <pre class="text--base mt-2 mb-0">@lang('Supported mimes'): {{ $data->extensions ?? '' }}</pre>
         @elseif(($data->type ?? '') == 'email')
-            <input type="email" class="{{ $formControlClass }}" name="{{ $label }}" value="{{ old($label) }}" @required(($data->is_required ?? '') == 'required')>
+            <input type="email" class="{{ $formControlClass }}" name="{{ $fieldName }}" value="{{ old($fieldName) }}" @required(($data->is_required ?? '') == 'required')>
         @elseif(($data->type ?? '') == 'url')
-            <input type="url" class="{{ $formControlClass }}" name="{{ $label }}" value="{{ old($label) }}" @required(($data->is_required ?? '') == 'required')>
+            <input type="url" class="{{ $formControlClass }}" name="{{ $fieldName }}" value="{{ old($fieldName) }}" @required(($data->is_required ?? '') == 'required')>
         @elseif(($data->type ?? '') == 'number')
-            <input type="number" step="any" min="0" class="{{ $formControlClass }}" name="{{ $label }}" value="{{ old($label) }}" @required(($data->is_required ?? '') == 'required')>
+            <input type="number" step="any" min="0" class="{{ $formControlClass }}" name="{{ $fieldName }}" value="{{ old($fieldName) }}" @required(($data->is_required ?? '') == 'required')>
         @elseif(($data->type ?? '') == 'datetime')
-            <input type="datetime-local" class="{{ $formControlClass }}" name="{{ $label }}" value="{{ old($label) }}" @required(($data->is_required ?? '') == 'required')>
+            <input type="datetime-local" class="{{ $formControlClass }}" name="{{ $fieldName }}" value="{{ old($fieldName) }}" @required(($data->is_required ?? '') == 'required')>
         @elseif(($data->type ?? '') == 'date')
-            <input type="date" class="{{ $formControlClass }}" name="{{ $label }}" value="{{ old($label) }}" @required(($data->is_required ?? '') == 'required')>
+            <input type="date" class="{{ $formControlClass }}" name="{{ $fieldName }}" value="{{ old($fieldName) }}" @required(($data->is_required ?? '') == 'required')>
         @elseif(($data->type ?? '') == 'time')
-            <input type="time" class="{{ $formControlClass }}" name="{{ $label }}" value="{{ old($label) }}" @required(($data->is_required ?? '') == 'required')>
+            <input type="time" class="{{ $formControlClass }}" name="{{ $fieldName }}" value="{{ old($fieldName) }}" @required(($data->is_required ?? '') == 'required')>
         @endif
     </div>
 @endforeach

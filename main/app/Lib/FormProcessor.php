@@ -147,16 +147,26 @@ class FormProcessor
         $requestForm = [];
 
         foreach ($formData as $data) {
-            $name  = $data->label;
-            $value = $request->$name;
+            $fieldName = $data->label ?? titleToKey($data->name ?? '');
+            $value     = $request->input($fieldName, null);
 
-            if ($data->type == 'datetime') $value = Carbon::parse($value)->format('Y-m-d H:i');
+            // fallback to `name`-based key if form data has not supplied label key
+            if (is_null($value) && !empty($data->name)) {
+                $fallbackName = titleToKey($data->name);
+                if ($fallbackName !== $fieldName) {
+                    $value = $request->input($fallbackName, null);
+                }
+            }
+
+            if ($data->type == 'datetime' && $value) {
+                $value = Carbon::parse($value)->format('Y-m-d H:i');
+            }
 
             if ($data->type == 'file') {
-                if ($request->hasFile($name)) {
+                if ($request->hasFile($fieldName)) {
                     $directory = date("Y") . "/" . date("m") . "/" . date("d");
                     $path      = getFilePath('verify') . '/' . $directory;
-                    $value     = $directory . '/' . fileUploader($value, $path);
+                    $value     = $directory . '/' . fileUploader($request->file($fieldName), $path);
                 } else {
                     $value = null;
                 }

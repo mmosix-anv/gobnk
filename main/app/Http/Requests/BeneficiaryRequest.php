@@ -41,9 +41,9 @@ class BeneficiaryRequest extends FormRequest
         // Predefined validation rules
         $rules = [
             'beneficiary_type' => 'required|string|in:own_bank,other_bank',
-            'other_bank'       => 'sometimes|required|integer',
-            'account_number'   => ['required', 'string', new UniqueBeneficiaryAccount(auth('web')->id(), $this->beneficiary?->id)],
-            'account_name'     => 'sometimes|required|string|max:255',
+            'other_bank'       => 'required_if:beneficiary_type,other_bank|integer',
+            'account_number'   => ['required_if:beneficiary_type,own_bank', 'string', new UniqueBeneficiaryAccount(auth('web')->id(), $this->beneficiary?->id)],
+            'account_name'     => 'required_if:beneficiary_type,own_bank|string|max:255',
             'short_name'       => 'required|string|max:40',
         ];
 
@@ -55,11 +55,14 @@ class BeneficiaryRequest extends FormRequest
             // Get dynamic validation rules from the FormProcessor
             $dynamicRules = (new FormProcessor)->valueValidation($formData);
 
-            // Exclude account_name, account_number, and short_name from dynamic rules
-            $filteredDynamicRules = array_diff_key($dynamicRules, array_flip(['account_number', 'account_name', 'short_name']));
-
-            // Merge dynamic rules with the predefined $rules array
-            $rules = array_merge($rules, $filteredDynamicRules);
+            if ($this->input('beneficiary_type') === 'other_bank') {
+                // For external bank, keep dynamic fields unchecked so account fields are validated as configured in form data.
+                $rules = array_merge($rules, $dynamicRules);
+            } else {
+                // For own bank option, exclude dynamic bank specific fields to avoid duplicate validation for account fields.
+                $filteredDynamicRules = array_diff_key($dynamicRules, array_flip(['account_number', 'account_name', 'short_name']));
+                $rules = array_merge($rules, $filteredDynamicRules);
+            }
         }
 
         return $rules;
