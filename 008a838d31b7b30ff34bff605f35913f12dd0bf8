@@ -1,0 +1,23 @@
+main/resources/views/themes/primary/user/moneyTransfer/otherBank.blade.php
+  1c57ce6abbed5b20 317-318
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.8",
+  "base_commit_sha": "008a838d31b7b30ff34bff605f35913f12dd0bf8",
+  "prompts": {
+    "1c57ce6abbed5b20": {
+      "agent_id": {
+        "tool": "github-copilot",
+        "id": "8825a393-e791-48cc-929e-cd5730b5f389",
+        "model": "copilot/auto"
+      },
+      "human_author": "Moses Oyewole <moses@anvillive.com>",
+      "messages": [],
+      "total_additions": 2,
+      "total_deletions": 1,
+      "accepted_lines": 2,
+      "overriden_lines": 0
+    }
+  }
+}
