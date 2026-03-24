@@ -1,0 +1,25 @@
+main/app/Http/Requests/BeneficiaryRequest.php
+  1c57ce6abbed5b20 59-71,73
+main/app/Lib/FormProcessor.php
+  1c57ce6abbed5b20 153,155-172
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.17",
+  "base_commit_sha": "a8e2d8324e315e299962545e9311153826e7bab5",
+  "prompts": {
+    "1c57ce6abbed5b20": {
+      "agent_id": {
+        "tool": "github-copilot",
+        "id": "8825a393-e791-48cc-929e-cd5730b5f389",
+        "model": "copilot/auto"
+      },
+      "human_author": "Moses Oyewole <moses@anvillive.com>",
+      "messages": [],
+      "total_additions": 37,
+      "total_deletions": 11,
+      "accepted_lines": 36,
+      "overriden_lines": 0
+    }
+  }
+}
