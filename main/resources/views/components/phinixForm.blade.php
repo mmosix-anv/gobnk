@@ -13,7 +13,7 @@
 
 @foreach ($formData as $data)
     @php
-        $data = (object) $data;
+        $data = (object) (array) $data;
         $name = $data->name ?? $data->label ?? '';
         $label = isset($data->name) ? $data->label : titleToKey($data->label ?? '');
     @endphp
