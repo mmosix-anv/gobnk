@@ -3,25 +3,18 @@
 -- Comprehensive dataset covering 100+ countries and thousands of financial institutions
 -- --------------------------------------------------------
 
--- 1. Add country column to other_banks if not exists
-SET @dbname = DATABASE();
-SET @tablename = 'other_banks';
-SET @columnname = 'country';
-SET @preparedStatement = (SELECT IF(
-  (SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS
-   WHERE TABLE_SCHEMA = @dbname
-     AND TABLE_NAME = @tablename
-     AND COLUMN_NAME = @columnname) > 0,
-  'SELECT 1',
-  CONCAT('ALTER TABLE ', @tablename, ' ADD ', @columnname, ' VARCHAR(255) NULL AFTER `name`')));
-PREPARE stmt FROM @preparedStatement;
-EXECUTE stmt;
-DEALLOCATE PREPARE stmt;
+-- 1. Ensure columns have enough length and exist for global data
+-- First, increase the 'name' column length to prevent 'Data too long' errors
+ALTER TABLE `other_banks` MODIFY `name` VARCHAR(255) NOT NULL;
+
+-- Add 'country' column if it doesn't exist (using a simpler method for shared hosts)
+-- If this fails, the user can manually add the column via phpMyAdmin
+ALTER TABLE `other_banks` ADD COLUMN IF NOT EXISTS `country` VARCHAR(255) NULL AFTER `name`;
 
 -- 2. Insert default forms for Other Bank and Wire Transfer
 INSERT IGNORE INTO `forms` (`act`, `form_data`, `created_at`, `updated_at`) VALUES 
-('other_bank', '{"account_name":{"type":"text","is_required":"required","label":"Account Name","extensions":"","options":[]},"account_number":{"type":"text","is_required":"required","label":"Account Number","extensions":"","options":[]},"routing_number":{"type":"text","is_required":"optional","label":"Routing Number / Swift Code","extensions":"","options":[]}}', NOW(), NOW()),
-('wire_transfer', '{"account_name":{"type":"text","is_required":"required","label":"Account Name","extensions":"","options":[]},"account_number":{"type":"text","is_required":"required","label":"Account Number","extensions":"","options":[]},"bank_name":{"type":"text","is_required":"required","label":"Bank Name","extensions":"","options":[]},"swift_code":{"type":"text","is_required":"required","label":"SWIFT/BIC Code","extensions":"","options":[]},"country":{"type":"text","is_required":"required","label":"Country","extensions":"","options":[]},"routing_number":{"type":"text","is_required":"optional","label":"Routing Number (for US)","extensions":"","options":[]},"iban":{"type":"text","is_required":"optional","label":"IBAN (for Europe/ME)","extensions":"","options":[]},"bank_address":{"type":"textarea","is_required":"optional","label":"Bank Address","extensions":"","options":[]}}', NOW(), NOW());
+('other_bank', '{"account_name":{"name":"Account Name","label":"account_name","type":"text","is_required":"required","extensions":"","options":[]},"account_number":{"name":"Account Number","label":"account_number","type":"text","is_required":"required","extensions":"","options":[]},"routing_number":{"name":"Routing Number / Swift Code","label":"routing_number","type":"text","is_required":"optional","extensions":"","options":[]}}', NOW(), NOW()),
+('wire_transfer', '{"account_name":{"name":"Account Name","label":"account_name","type":"text","is_required":"required","extensions":"","options":[]},"account_number":{"name":"Account Number","label":"account_number","type":"text","is_required":"required","extensions":"","options":[]},"bank_name":{"name":"Bank Name","label":"bank_name","type":"text","is_required":"required","extensions":"","options":[]},"swift_code":{"name":"SWIFT/BIC Code","label":"swift_code","type":"text","is_required":"required","extensions":"","options":[]},"country":{"name":"Country","label":"country","type":"text","is_required":"required","extensions":"","options":[]},"routing_number":{"name":"Routing Number (for US)","label":"routing_number","type":"text","is_required":"optional","extensions":"","options":[]},"iban":{"name":"IBAN (for Europe/ME)","label":"iban","type":"text","is_required":"optional","extensions":"","options":[]},"bank_address":{"name":"Bank Address","label":"bank_address","type":"textarea","is_required":"optional","extensions":"","options":[]}}', NOW(), NOW());
 
 -- 3. Populate other_banks and wire_transfer_settings with global data
 -- We use variables to store the form IDs to ensure they're correct
