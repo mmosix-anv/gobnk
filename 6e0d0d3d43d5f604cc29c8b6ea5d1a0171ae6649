@@ -1,0 +1,27 @@
+main/app/Http/Requests/BeneficiaryRequest.php
+  1c57ce6abbed5b20 44-46,58-65
+main/resources/views/components/phinixForm.blade.php
+  1c57ce6abbed5b20 18-19,25,27,29,33,42-43,51-52,57,60,62,64,66,68,70
+main/app/Lib/FormProcessor.php
+  1c57ce6abbed5b20 150-151,153-159,161-163,166,169
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.17",
+  "base_commit_sha": "6e0d0d3d43d5f604cc29c8b6ea5d1a0171ae6649",
+  "prompts": {
+    "1c57ce6abbed5b20": {
+      "agent_id": {
+        "tool": "github-copilot",
+        "id": "8825a393-e791-48cc-929e-cd5730b5f389",
+        "model": "copilot/auto"
+      },
+      "human_author": "Moses Oyewole <moses@anvillive.com>",
+      "messages": [],
+      "total_additions": 43,
+      "total_deletions": 29,
+      "accepted_lines": 43,
+      "overriden_lines": 0
+    }
+  }
+}
