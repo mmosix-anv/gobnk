@@ -112,7 +112,7 @@
                             <select id="editOtherBank" class="form--control form--control--sm form-select select-2" name="other_bank" required>
                                 <option disabled>@lang('Select One')</option>
 
-                                @foreach($otherBanks as $otherBank)
+                                @foreach($otherBanks->flatten() as $otherBank)
                                     <option value="{{ $otherBank->id }}">{{ __($otherBank->name) }}</option>
                                 @endforeach
                             </select>
