@@ -34,7 +34,7 @@
                                 <td>{{ __($beneficiary->short_name) }}</td>
                                 <td>
                                     <div class="d-flex justify-content-end gap-2">
-                                        <button type="button" class="btn btn-outline--base btn--icon btn-edit" data-action="{{ route('user.money.transfer.beneficiary.update', $beneficiary) }}" data-other_bank="{{ $beneficiary->beneficiaryable_id }}" data-details="{{ json_encode($beneficiary->details) }}" data-file_download_url="{{ route('user.money.transfer.beneficiary.file', [$beneficiary, 'data' => ':value']) }}">
+                                        <button type="button" class="btn btn-outline--base btn--icon btn-edit" data-action="{{ route('user.money.transfer.beneficiary.update', $beneficiary) }}" data-other_bank="{{ $beneficiary->beneficiaryable_id }}" data-short_name="{{ $beneficiary->short_name }}" data-details="{{ json_encode($beneficiary->details) }}" data-file_download_url="{{ route('user.money.transfer.beneficiary.file', [$beneficiary, 'data' => ':value']) }}">
                                             <i class="ti ti-edit transform-1"></i>
                                         </button>
                                         <button type="button" class="btn btn--base btn--icon btn-transfer" data-modal_heading="{{ trans('Transfer Money to') . ' ' . __($beneficiary->short_name) . trans('\'s Account') }}" data-beneficiaryable_id="{{ $beneficiary->beneficiaryable_id }}" data-bs-toggle="modal" data-bs-target="#transferMoneyModal" data-bank_name="{{ __($bank->name) }}" data-per_transaction_min_amount="{{ $setting->cur_sym . showAmount($bank->per_transaction_min_amount) }}" data-per_transaction_max_amount="{{ $setting->cur_sym . showAmount($bank->per_transaction_max_amount) }}" data-daily_transaction_max_amount="{{ $setting->cur_sym . showAmount($bank->daily_transaction_max_amount) }}" data-daily_transaction_limit="{{ $bank->daily_transaction_limit }}" data-monthly_transaction_max_amount="{{ $setting->cur_sym . showAmount($bank->monthly_transaction_max_amount) }}" data-monthly_transaction_limit="{{ $bank->monthly_transaction_limit }}" data-fixed_charge="{{ $setting->cur_sym . showAmount($bank->fixed_charge) }}" data-percentage_charge="{{ $bank->percentage_charge . '%' }}" data-processing_time="{{ __($bank->processing_time) }}" data-instruction="{{ __($bank->instruction) }}" data-recipient="{{ __($beneficiary->account_name) }}">
@@ -85,6 +85,10 @@
                                 <option selected disabled>@lang('Select Country First')</option>
                             </select>
                         </div>
+                        <div class="form-group mt-3">
+                            <label for="addShortName" class="form--label required">@lang('Short Name')</label>
+                            <input type="text" id="addShortName" class="form--control form--control--sm" name="short_name" required>
+                        </div>
                         <div id="addDynamicFields"></div>
                         <button type="submit" class="btn btn--sm btn--base w-100">
                             @lang('Submit')
@@ -116,6 +120,10 @@
                                     <option value="{{ $otherBank->id }}">{{ __($otherBank->name) }}</option>
                                 @endforeach
                             </select>
+                        </div>
+                        <div class="form-group mt-3">
+                            <label for="editShortName" class="form--label required">@lang('Short Name')</label>
+                            <input type="text" id="editShortName" class="form--control form--control--sm" name="short_name" required>
                         </div>
                         <div id="editDynamicFields"></div>
                         <button type="submit" class="btn btn--sm btn--base w-100">
@@ -299,6 +307,10 @@
                             htmlElement.val(element.value)
                     }
                 })
+
+                if (data.short_name) {
+                    modal.find('#editShortName, #addShortName').val(data.short_name)
+                }
             }
 
             $(function () {
