@@ -42,8 +42,8 @@ class BeneficiaryRequest extends FormRequest
         $rules = [
             'beneficiary_type' => 'required|string|in:own_bank,other_bank',
             'other_bank'       => 'required_if:beneficiary_type,other_bank|integer',
-            'account_number'   => ['required_if:beneficiary_type,own_bank', 'string', new UniqueBeneficiaryAccount(auth('web')->id(), $this->beneficiary?->id)],
-            'account_name'     => 'required_if:beneficiary_type,own_bank|string|max:255',
+            'account_number'   => ['required', 'string', new UniqueBeneficiaryAccount(auth('web')->id(), $this->beneficiary?->id)],
+            'account_name'     => 'required|string|max:255',
             'short_name'       => 'required|string|max:40',
         ];
 
@@ -67,6 +67,9 @@ class BeneficiaryRequest extends FormRequest
                         $fallbackDynamicRules[$snakeField] = $rule;
                     }
                 }
+
+                // Filter out base fields to preserve their validation rules
+                $fallbackDynamicRules = array_diff_key($fallbackDynamicRules, array_flip(['account_number', 'account_name', 'short_name']));
 
                 $rules = array_merge($rules, $fallbackDynamicRules);
             } else {
