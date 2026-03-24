@@ -221,6 +221,32 @@ class MoneyTransferController extends Controller
         $otherBank->load('form');
 
         $form = $otherBank->form;
+        $formData = (array) $form->form_data;
+
+        // Ensure required fields are present in the form data
+        if (!isset($formData['account_name'])) {
+            $formData['account_name'] = (object) [
+                'name' => 'Account Name',
+                'label' => 'account_name',
+                'type' => 'text',
+                'is_required' => '1',
+                'extensions' => '',
+                'options' => [],
+            ];
+        }
+
+        if (!isset($formData['account_number'])) {
+            $formData['account_number'] = (object) [
+                'name' => 'Account Number',
+                'label' => 'account_number',
+                'type' => 'text',
+                'is_required' => '1',
+                'extensions' => '',
+                'options' => [],
+            ];
+        }
+
+        $form->form_data = (object) $formData;
 
         return response()->json([
             'html' => view('components.phinixForm', compact('form'))->render(),
