@@ -136,7 +136,7 @@
                                     <label class="col-form--label">@lang('City')</label>
                                 </div>
                                 <div class="col-lg-8">
-                                    <input type="text" class="form--control" name="city" value="{{ optional($user->address)->city }}">
+                                    <input type="text" class="form--control" name="city" value="{{ data_get($user, 'address.city') ?? '' }}">
                                 </div>
                             </div>
                         </div>
@@ -146,7 +146,7 @@
                                     <label class="col-form--label">@lang('State')</label>
                                 </div>
                                 <div class="col-lg-8">
-                                    <input type="text" class="form--control" name="state" value="{{ optional($user->address)->state }}">
+                                    <input type="text" class="form--control" name="state" value="{{ data_get($user, 'address.state') ?? '' }}">
                                 </div>
                             </div>
                         </div>

@@ -41,7 +41,7 @@ class RegisterController extends Controller
 
         if ($setting->agree_policy) $agree = 'required';
 
-        $countryData  = json_decode(file_get_contents(resource_path('views/partials/country.json')), true);
+        $countryData  = (array)json_decode(file_get_contents(resource_path('views/partials/country.json')));
         $countryCodes = implode(',', array_keys($countryData));
         $mobileCodes  = implode(',', array_column($countryData, 'dial_code'));
         $countries    = implode(',', array_column($countryData, 'country'));

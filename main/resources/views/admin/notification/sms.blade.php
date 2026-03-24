@@ -144,7 +144,7 @@
                                                     <label class="col-form--label required">@lang('API Token')</label>
                                                 </div>
                                                 <div class="col-xxl-9 col-lg-9 col-md-9">
-                                                    <input type="text" class="form--control" name="gatewayapi_token" value="{{ data_get($setting->sms_config ?? null, 'gatewayapi.token') }}" placeholder="@lang('GatewayAPI Token')" required>
+                                                    <input type="text" class="form--control" name="gatewayapi_token" value="{{ data_get($setting->sms_config ?? null, 'gatewayapi.token') }}" placeholder="@lang('GatewayAPI Token')">
                                                 </div>
                                             </div>
                                         </div>
@@ -219,15 +219,11 @@
                                 </div>
                                 <div class="card-body">
                                     <div class="row gy-3 sms-notification-headers">
-                                        @php
-                                            $headerNames = data_get($setting->sms_config, 'custom.headers.name') ?? [];
-                                            $headerValues = data_get($setting->sms_config, 'custom.headers.value') ?? [];
-                                        @endphp
-                                        @for($i = 0; $i < count($headerNames); $i++)
+                                        @for($i = 0; $i < count($setting->sms_config->custom->headers->name); $i++)
                                             <div class="col-12 sms-notification-headers-col">
                                                 <div class="input--group">
-                                                    <input type="text" class="form--control" name="custom_header_name[]" value="{{ $headerNames[$i] }}" placeholder="@lang('Headers Name')" required>
-                                                    <input type="text" class="form--control" name="custom_header_value[]" value="{{ $headerValues[$i] }}" placeholder="@lang('Headers Value')" required>
+                                                    <input type="text" class="form--control" name="custom_header_name[]" value="{{ $setting->sms_config?->custom->headers->name[$i] }}" placeholder="@lang('Headers Name')" required>
+                                                    <input type="text" class="form--control" name="custom_header_value[]" value="{{ $setting->sms_config?->custom->headers->value[$i] }}" placeholder="@lang('Headers Value')" required>
                                                     <button type="button" class="btn btn--danger px-2 delete-sms-header-btn">
                                                         <i class="ti ti-x"></i>
                                                     </button>
@@ -248,15 +244,11 @@
                                 </div>
                                 <div class="card-body">
                                     <div class="row gy-3 sms-notification-body">
-                                        @php
-                                            $bodyNames = data_get($setting->sms_config, 'custom.body.name') ?? [];
-                                            $bodyValues = data_get($setting->sms_config, 'custom.body.value') ?? [];
-                                        @endphp
-                                        @for($i = 0; $i < count($bodyNames); $i++)
+                                        @for($i = 0; $i < count($setting->sms_config->custom->body->name); $i++)
                                             <div class="col-12 sms-notification-body-col">
                                                 <div class="input--group">
-                                                    <input type="text" class="form--control" name="custom_body_name[]" value="{{ $bodyNames[$i] }}" placeholder="@lang('Body Name')" required>
-                                                    <input type="text" class="form--control" name="custom_body_value[]" value="{{ $bodyValues[$i] }}" placeholder="@lang('Body Value')" required>
+                                                    <input type="text" class="form--control" name="custom_body_name[]" value="{{ $setting->sms_config?->custom->body->name[$i] }}" placeholder="@lang('Body Name')" required>
+                                                    <input type="text" class="form--control" name="custom_body_value[]" value="{{ $setting->sms_config?->custom->body->value[$i] }}" placeholder="@lang('Body Value')" required>
                                                     <button type="button" class="btn btn--danger px-2 delete-sms-body-btn">
                                                         <i class="ti ti-x"></i>
                                                     </button>
