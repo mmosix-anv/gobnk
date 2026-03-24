@@ -56,10 +56,21 @@ class BeneficiaryRequest extends FormRequest
             $dynamicRules = (new FormProcessor)->valueValidation($formData);
 
             if ($this->input('beneficiary_type') === 'other_bank') {
-                // For external bank, keep dynamic fields unchecked so account fields are validated as configured in form data.
-                $rules = array_merge($rules, $dynamicRules);
+                // For external bank, use both label and snake-cased labels to avoid form-name mismatch.
+                $fallbackDynamicRules = [];
+
+                foreach ($dynamicRules as $field => $rule) {
+                    $fallbackDynamicRules[$field] = $rule;
+                    $snakeField = titleToKey($field);
+
+                    if ($snakeField !== $field) {
+                        $fallbackDynamicRules[$snakeField] = $rule;
+                    }
+                }
+
+                $rules = array_merge($rules, $fallbackDynamicRules);
             } else {
-                // For own bank option, exclude dynamic bank specific fields to avoid duplicate validation for account fields.
+                // For own bank option, exclude dynamic bank-specific fields to avoid duplicate validation for account fields.
                 $filteredDynamicRules = array_diff_key($dynamicRules, array_flip(['account_number', 'account_name', 'short_name']));
                 $rules = array_merge($rules, $filteredDynamicRules);
             }

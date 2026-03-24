@@ -150,11 +150,26 @@ class FormProcessor
             $fieldName = $data->label ?? titleToKey($data->name ?? '');
             $value     = $request->input($fieldName, null);
 
-            // fallback to `name`-based key if form data has not supplied label key
+            // Extended fallback for different naming styles used by incoming requests
             if (is_null($value) && !empty($data->name)) {
-                $fallbackName = titleToKey($data->name);
-                if ($fallbackName !== $fieldName) {
-                    $value = $request->input($fallbackName, null);
+                $potentialNames = array_unique([
+                    $data->name,
+                    titleToKey($data->name),
+                    titleToKey($data->label ?? ''),
+                    str_replace(' ', '_', strtolower($data->name)),
+                    str_replace(' ', '_', strtolower($data->label ?? '')),
+                ]);
+
+                foreach ($potentialNames as $key) {
+                    if (!$key) {
+                        continue;
+                    }
+
+                    $valueCandidate = $request->input($key);
+                    if (!is_null($valueCandidate)) {
+                        $value = $valueCandidate;
+                        break;
+                    }
                 }
             }
 
