@@ -19,6 +19,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
@@ -597,7 +598,7 @@ class MoneyTransferController extends Controller
 
                 $sender              = User::lockForUpdate()->findOrFail(auth('web')->id());
                 $wireTransferPayload = MoneyTransferService::make()
-                    ->processWireTransferPayload($transactionStateInformation['wire_transfer_payload']);
+                    ->processWireTransferPayload($transactionStateInformation['wire_transfer_payload'], WireTransferSettings::with('form')->firstOrFail());
 
                 // Record the money transfer in the database
                 $moneyTransfer = $sender->moneyTransfers()->create([
@@ -651,6 +652,19 @@ class MoneyTransferController extends Controller
                 ['success', 'The request for the wire transfer has been successfully initiated.']
             ]);
         } catch (Throwable $exception) {
+            Log::error('Wire transfer finalization failed', [
+                'user_id'                  => auth('web')->id(),
+                'transaction_state_keys'   => array_keys($transactionStateInformation),
+                'has_wire_transfer_payload'=> array_key_exists('wire_transfer_payload', $transactionStateInformation),
+                'wire_transfer_payload'    => $transactionStateInformation['wire_transfer_payload'] ?? null,
+                'amount'                   => $transactionStateInformation['amount'] ?? null,
+                'charge'                   => $transactionStateInformation['charge'] ?? null,
+                'otp_verified'             => $transactionStateInformation['otp_verified'] ?? false,
+                'exception_message'        => $exception->getMessage(),
+                'exception_file'           => $exception->getFile(),
+                'exception_line'           => $exception->getLine(),
+            ]);
+
             return to_route('user.money.transfer.wire.transfer')->with('toasts', [
                 ['error', $exception->getMessage()]
             ]);

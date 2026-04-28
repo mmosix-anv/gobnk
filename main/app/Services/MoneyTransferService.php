@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Lib\FileManager;
-use App\Models\Form;
 use App\Models\MoneyTransfer;
 use App\Models\OtherBank;
 use App\Models\Setting;
@@ -274,9 +273,10 @@ class MoneyTransferService extends BaseService
      * @return array
      * @throws Exception
      */
-    public function processWireTransferPayload(array $payload): array
+    public function processWireTransferPayload(array $payload, ?WireTransferSettings $wireTransferSettings = null): array
     {
-        $formData = Form::where('act', '=', 'wire_transfer')->value('form_data');
+        $wireTransferSettings ??= WireTransferSettings::with('form')->firstOrFail();
+        $formData = $wireTransferSettings->form?->form_data ?? [];
 
         return $this->processFormFieldData($formData, $payload);
     }
