@@ -10,7 +10,6 @@ use App\Models\WithdrawMethod;
 use App\Constants\ManageStatus;
 use App\Models\AdminNotification;
 use App\Http\Controllers\Controller;
-use Illuminate\Validation\Rule;
 use Symfony\Component\HttpFoundation\Response;
 
 class WithdrawController extends Controller
@@ -29,13 +28,8 @@ class WithdrawController extends Controller
         $settings = bs();
 
         $validated = $this->validate(request(), [
-            'method_id'          => 'required|int|gt:0',
-            'amount'             => 'required|numeric|gt:0',
-            'authorization_mode' => [
-                Rule::requiredIf(fn() => $settings->sms_based_otp || $settings->email_based_otp),
-                'integer',
-                Rule::in([ManageStatus::AUTHORIZATION_MODE_EMAIL, ManageStatus::AUTHORIZATION_MODE_SMS]),
-            ],
+            'method_id' => 'required|int|gt:0',
+            'amount'    => 'required|numeric|gt:0',
         ]);
 
         $user   = auth('web')->user();
@@ -77,7 +71,13 @@ class WithdrawController extends Controller
         $withdraw->save();
 
         if ($settings->email_based_otp || $settings->sms_based_otp) {
-            $sendVia = $validated['authorization_mode'] == ManageStatus::AUTHORIZATION_MODE_EMAIL ? 'email' : 'sms';
+            $sendVia = preferredOtpChannel($settings);
+
+            if (!$sendVia) {
+                return back()->with('toasts', [
+                    ['error', 'OTP delivery is not configured.'],
+                ]);
+            }
 
             OTPManager::make()->generateOTP($user->email)->sendOTP($sendVia);
 
@@ -146,16 +146,6 @@ class WithdrawController extends Controller
         $this->validate(request(), $validationRule);
 
         $user = $withdraw->user;
-
-        if ($user->ts) {
-            $response = verifyG2fa($user, request('authenticator_code'));
-
-            if (!$response) {
-                $toast[] = ['error', 'Wrong verification code'];
-
-                return back()->with('toasts', $toast);
-            }
-        }
 
         if ($withdraw->amount > $user->balance) {
             $toast[] = ['error', "You don't have enough amount to make this withdrawal"];

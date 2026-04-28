@@ -60,7 +60,9 @@ class LoginController extends Controller
 
     function authenticated(Request $request, $user)
     {
-        $user->tc = $user->ts == ManageStatus::ACTIVE ? ManageStatus::UNVERIFIED : ManageStatus::VERIFIED;
+        $requiresTwoFactor = $user->ts == ManageStatus::ACTIVE && preferredOtpChannel() !== null;
+
+        $user->tc = $requiresTwoFactor ? ManageStatus::UNVERIFIED : ManageStatus::VERIFIED;
         $user->save();
 
         return redirect()->intended($request->get('redirect', route('user.home')));

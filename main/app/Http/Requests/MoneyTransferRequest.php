@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\Constants\ManageStatus;
 use App\Models\OtherBank;
 use App\Models\User;
 use Illuminate\Contracts\Validation\ValidationRule;
@@ -28,7 +27,6 @@ class MoneyTransferRequest extends FormRequest
     public function rules(): array
     {
         $beneficiaryableType = $this->route()->named('user.money.transfer.within.bank.transfer') ? User::class : OtherBank::class;
-        $settings            = bs();
 
         return [
             'beneficiaryable_id' => [
@@ -42,11 +40,6 @@ class MoneyTransferRequest extends FormRequest
                 )
             ],
             'amount'             => 'required|numeric|gt:0',
-            'authorization_mode' => [
-                Rule::requiredIf(fn() => $settings->sms_based_otp || $settings->email_based_otp),
-                'integer',
-                Rule::in([ManageStatus::AUTHORIZATION_MODE_EMAIL, ManageStatus::AUTHORIZATION_MODE_SMS]),
-            ],
         ];
     }
 

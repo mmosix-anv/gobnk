@@ -59,16 +59,20 @@
                             </p>
                         </div>
                         <div class="col-12">
+                            @if($setting->email_based_otp || $setting->sms_based_otp)
+                                <div class="alert alert--info mb-3">
+                                    <span class="alert__content w-100 ps-0">
+                                        @if($setting->email_based_otp)
+                                            @lang('A verification code will be sent to your email address before submission.')
+                                        @else
+                                            @lang('A verification code will be sent to your mobile number before submission.')
+                                        @endif
+                                    </span>
+                                </div>
+                            @endif
                             <div class="d-flex justify-content-center gap-2">
                                 <a href="{{ route('user.dps.plans') }}" class="btn btn--sm btn--secondary px-4">@lang('Cancel')</a>
-
-                                @if($setting->email_based_otp || $setting->sms_based_otp)
-                                    <button type="button" class="btn btn--sm btn--base px-4" data-bs-toggle="modal" data-bs-target="#authorizationModal">
-                                        @lang('Confirm')
-                                    </button>
-                                @else
-                                    <button type="submit" class="btn btn--sm btn--base px-4">@lang('Confirm')</button>
-                                @endif
+                                <button type="submit" class="btn btn--sm btn--base px-4">@lang('Confirm')</button>
                             </div>
                         </div>
                     </form>
@@ -77,51 +81,3 @@
         </div>
     </div>
 @endsection
-
-@push('user-panel-modal')
-    <div class="custom--modal modal fade" id="authorizationModal" tabindex="-1" aria-labelledby="authorizationModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title" id="authorizationModalLabel">@lang('Verify Your Identity')</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form action="{{ route('user.dps.plan.confirm') }}" method="post">
-                        @csrf
-                        <input type="hidden" name="dps_plan" value="{{ $plan->id }}">
-                        <div class="form-group">
-                            <label for="authorizationMode" class="form--label required">@lang('Authorization Mode')</label>
-                            <select id="authorizationMode" class="form--control form--control--sm wide" name="authorization_mode" required>
-                                <option selected disabled>@lang('Select One')</option>
-
-                                @if($setting->email_based_otp)
-                                    <option value="{{ ManageStatus::AUTHORIZATION_MODE_EMAIL }}">@lang('Email')</option>
-                                @endif
-
-                                @if($setting->sms_based_otp)
-                                    <option value="{{ ManageStatus::AUTHORIZATION_MODE_SMS }}">@lang('SMS')</option>
-                                @endif
-                            </select>
-                        </div>
-                        <button type="submit" class="btn btn--sm btn--base w-100">
-                            @lang('Submit')
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-@endpush
-
-@push('page-script')
-    <script>
-        (function ($) {
-            $(function () {
-                $('#authorizationModal').on('hidden.bs.modal', function () {
-                    $('#authorizationMode').val('@lang("Select One")').niceSelect('update')
-                })
-            })
-        })(jQuery)
-    </script>
-@endpush

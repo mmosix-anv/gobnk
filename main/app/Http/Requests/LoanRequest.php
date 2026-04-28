@@ -2,11 +2,9 @@
 
 namespace App\Http\Requests;
 
-use App\Constants\ManageStatus;
 use App\Lib\FormProcessor;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 use Symfony\Component\HttpFoundation\Response;
 
 class LoanRequest extends FormRequest
@@ -33,15 +31,8 @@ class LoanRequest extends FormRequest
 
         $formData     = json_decode($transactionStateInformation['loan_form']['form_data']);
         $dynamicRules = (new FormProcessor)->valueValidation($formData);
-        $settings     = bs();
-
         return [
             ...$dynamicRules,
-            'authorization_mode' => [
-                Rule::requiredIf(fn() => $settings->sms_based_otp || $settings->email_based_otp),
-                'integer',
-                Rule::in([ManageStatus::AUTHORIZATION_MODE_EMAIL, ManageStatus::AUTHORIZATION_MODE_SMS]),
-            ],
         ];
     }
 }

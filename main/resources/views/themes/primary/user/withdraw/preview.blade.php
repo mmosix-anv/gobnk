@@ -21,14 +21,6 @@
                         </div>
 
                         <x-phinix-form identifier="id" identifierValue="{{ $withdraw->method->form_id }}" />
-
-                        @if($user->ts)
-                            <div class="col-12">
-                                <label class="form--label required">@lang('Google Authenticator Code')</label>
-                                <input type="text" class="form--control" name="authenticator_code" required>
-                            </div>
-                        @endif
-
                         <div class="col-12">
                             <button type="submit" class="btn btn--base w-100">@lang('Submit')</button>
                         </div>

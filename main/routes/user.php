@@ -38,9 +38,10 @@ Route::middleware('auth')->name('user.')->group(function () {
         Route::controller('AuthorizationController')->group(function () {
             Route::get('authorization', 'authorizeForm')->name('authorization');
             Route::get('resend-verify/{type}', 'sendVerifyCode')->name('send.verify.code');
+            Route::get('resend-twofactor/{type}', 'sendTwoFactorCode')->name('send.twofactor.code');
             Route::post('verify-email', 'emailVerification')->name('verify.email');
             Route::post('verify-mobile', 'mobileVerification')->name('verify.mobile');
-            Route::post('verify-g2fa', 'g2faVerification')->name('go2fa.verify');
+            Route::post('verify-twofactor/{type}', 'twoFactorVerification')->name('verify.twofactor');
         });
 
         Route::middleware(['authorize.status', 'auto.logout'])->group(function () {

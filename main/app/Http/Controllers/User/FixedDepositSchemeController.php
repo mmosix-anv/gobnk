@@ -11,7 +11,6 @@ use App\Services\FixedDepositSchemeService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\Rule;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
@@ -82,14 +81,6 @@ class FixedDepositSchemeController extends Controller
     {
         $settings = bs();
 
-        $validated = $request->validate([
-            'authorization_mode' => [
-                Rule::requiredIf(fn() => $settings->sms_based_otp || $settings->email_based_otp),
-                'integer',
-                Rule::in([ManageStatus::AUTHORIZATION_MODE_EMAIL, ManageStatus::AUTHORIZATION_MODE_SMS]),
-            ],
-        ]);
-
         $transactionStateInformation = session('transaction_state_information', []);
 
         if (!isset($transactionStateInformation['fds_plan'])) {
@@ -110,7 +101,6 @@ class FixedDepositSchemeController extends Controller
             // Check if OTP is required
             if ($settings->email_based_otp || $settings->sms_based_otp) {
                 FixedDepositSchemeService::make()->processOTP(
-                    $validated['authorization_mode'],
                     $user,
                     $transactionStateInformation,
                     'user.fds.plan.finalize'

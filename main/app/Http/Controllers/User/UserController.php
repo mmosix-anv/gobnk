@@ -7,7 +7,6 @@ use App\Lib\FormProcessor;
 use App\Models\GatewayCurrency;
 use App\Models\Transaction;
 use App\Constants\ManageStatus;
-use App\Lib\GoogleAuthenticator;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Rules\StrongPassword;
@@ -182,61 +181,42 @@ class UserController extends Controller
 
     public function show2faForm()
     {
-        $ga        = new GoogleAuthenticator();
         $user      = auth('web')->user();
-        $secret    = $ga->createSecret();
-        $qrCodeUrl = $ga->getQRCodeGoogleUrl($user->username . '@' . bs('site_name'), $secret);
         $pageTitle = '2FA Settings';
+        $sendVia   = preferredOtpChannel();
 
-        return view("{$this->activeTheme}user.page.twoFactor", compact('pageTitle', 'secret', 'qrCodeUrl', 'user'));
+        return view("{$this->activeTheme}user.page.twoFactor", compact('pageTitle', 'sendVia', 'user'));
     }
 
     public function enable2fa()
     {
         $user = auth('web')->user();
 
-        $this->validate(request(), [
-            'key'    => 'required',
-            'code'   => 'required|array|min:6',
-            'code.*' => 'required|integer',
-        ]);
+        if (!preferredOtpChannel()) {
+            $toast[] = ['error', 'Email or SMS verification must be enabled before activating two-factor authentication'];
 
-        $verCode  = (int)(implode("", request('code')));
-        $response = verifyG2fa($user, $verCode, request('key'));
-
-        if ($response) {
-            $user->tsc = request('key');
-            $user->ts  = ManageStatus::YES;
-            $user->save();
-
-            $toast[] = ['success', 'Two factor authenticator successfully activated'];
-        } else {
-            $toast[] = ['error', 'Wrong verification code'];
+            return back()->with('toasts', $toast);
         }
+
+        $user->ts  = ManageStatus::YES;
+        $user->tc  = ManageStatus::VERIFIED;
+        $user->tsc = null;
+        $user->save();
+
+        $toast[] = ['success', 'Two-factor authentication has been activated'];
 
         return back()->with('toasts', $toast);
     }
 
     public function disable2fa()
     {
-        $this->validate(request(), [
-            'code'   => 'required|array|min:6',
-            'code.*' => 'required|integer',
-        ]);
+        $user      = auth('web')->user();
+        $user->tsc = null;
+        $user->ts  = ManageStatus::NO;
+        $user->tc  = ManageStatus::VERIFIED;
+        $user->save();
 
-        $verCode  = (int)(implode("", request('code')));
-        $user     = auth('web')->user();
-        $response = verifyG2fa($user, $verCode);
-
-        if ($response) {
-            $user->tsc = null;
-            $user->ts  = ManageStatus::NO;
-            $user->save();
-
-            $toast[] = ['success', 'Two factor authenticator successfully deactivated'];
-        } else {
-            $toast[] = ['error', 'Wrong verification code'];
-        }
+        $toast[] = ['success', 'Two-factor authentication has been deactivated'];
 
         return back()->with('toasts', $toast);
     }

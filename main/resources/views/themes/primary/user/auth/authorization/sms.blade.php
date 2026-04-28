@@ -1,6 +1,11 @@
 @extends($activeTheme . 'layouts.app')
 
 @php $mobileConfirmContent = getSiteData('mobile_confirm.content', true) @endphp
+@php
+    $formAction = $verificationRoute ?? route('user.verify.mobile');
+    $resendAction = $resendRoute ?? route('user.send.verify.code', 'phone');
+    $resendText = $resendMessage ?? 'If you don\'t receive any code, then you can';
+@endphp
 
 @section('content')
     <section class="account">
@@ -19,7 +24,7 @@
                             <h3 class="account__form__title mb-0">{{ __($mobileConfirmContent->data_info->form_heading) }}</h3>
                         </div>
                         <p class="mb-4">@lang('A six-digit verification code has been sent to') <b>{{ '+' . showMobileNumber($user->mobile) }}</b></p>
-                        <form action="{{ route('user.verify.mobile') }}" method="POST" class="verification-code-form">
+                        <form action="{{ $formAction }}" method="POST" class="verification-code-form">
                             @csrf
                             <div class="row">
                                 <div class="col-sm-12 form-group">
@@ -35,7 +40,7 @@
                                 <div class="col-sm-12">
                                     <div class="have-account">
                                         <p class="have-account__text">
-                                            @lang('If you don\'t receive any code, then you can') <a href="{{ route('user.send.verify.code', 'phone') }}" class="have-account__link text--base">@lang('Try Again.')</a>
+                                            @lang($resendText) <a href="{{ $resendAction }}" class="have-account__link text--base">@lang('Try Again.')</a>
                                         </p>
                                     </div>
                                 </div>

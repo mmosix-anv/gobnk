@@ -11,7 +11,6 @@ use App\Services\DepositPensionSchemeService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\Rule;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
@@ -36,16 +35,11 @@ class DepositPensionSchemeController extends Controller
 
     public function confirmPlan(Request $request)
     {
-        $settings = bs();
-
         $validated = $request->validate([
-            'dps_plan'           => 'required|integer',
-            'authorization_mode' => [
-                Rule::requiredIf(fn() => $settings->sms_based_otp || $settings->email_based_otp),
-                'integer',
-                Rule::in([ManageStatus::AUTHORIZATION_MODE_EMAIL, ManageStatus::AUTHORIZATION_MODE_SMS]),
-            ],
+            'dps_plan' => 'required|integer',
         ]);
+
+        $settings = bs();
 
         $plan = DepositPensionSchemePlan::active()->findOrFail($validated['dps_plan']);
         $user = auth('web')->user();
@@ -64,7 +58,6 @@ class DepositPensionSchemeController extends Controller
             // Check if OTP is required
             if ($settings->email_based_otp || $settings->sms_based_otp) {
                 DepositPensionSchemeService::make()->processOTP(
-                    $validated['authorization_mode'],
                     $user,
                     $transactionStateInformation,
                     'user.dps.plan.finalize'

@@ -4,7 +4,6 @@ use App\Constants\ManageStatus;
 use App\Lib\Captcha;
 use App\Lib\ClientInfo;
 use App\Lib\FileManager;
-use App\Lib\GoogleAuthenticator;
 use App\Models\Plugin;
 use App\Models\ReferralSettings;
 use App\Models\Setting;
@@ -333,23 +332,14 @@ function showEmailAddress($email): array|string
     return substr_replace($email, '***', 1, $endPosition);
 }
 
-function verifyG2fa($user, $code, $secret = null): bool
+function preferredOtpChannel(?Setting $settings = null): ?string
 {
-    $authenticator = new GoogleAuthenticator();
+    $settings ??= bs();
 
-    if (!$secret) $secret = $user->tsc;
+    if ($settings->email_based_otp) return 'email';
+    if ($settings->sms_based_otp) return 'sms';
 
-    $oneCode  = $authenticator->getCode($secret);
-    $userCode = $code;
-
-    if ($oneCode == $userCode) {
-        $user->tc = ManageStatus::YES;
-        $user->save();
-
-        return true;
-    }
-
-    return false;
+    return null;
 }
 
 function getTrx($length = 12): string

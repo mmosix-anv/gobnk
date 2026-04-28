@@ -93,7 +93,7 @@ class LoanController extends Controller
             }
         }
 
-        $transactionStateInformation['loan_form_data'] = array_diff_key($validated, array_flip(['authorization_mode']));
+        $transactionStateInformation['loan_form_data'] = $validated;
 
         $settings = bs();
         $user     = auth('web')->user();
@@ -101,7 +101,6 @@ class LoanController extends Controller
         // Check if OTP is required
         if ($settings->email_based_otp || $settings->sms_based_otp) {
             LoanService::make()->processOTP(
-                $validated['authorization_mode'],
                 $user,
                 $transactionStateInformation,
                 'user.loan.plan.finalize'

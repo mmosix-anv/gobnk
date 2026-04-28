@@ -83,7 +83,6 @@ class MoneyTransferController extends Controller
             // Check if OTP is required
             if ($settings->email_based_otp || $settings->sms_based_otp) {
                 MoneyTransferService::make()->processOTP(
-                    $validated['authorization_mode'],
                     $user,
                     $transactionStateInformation,
                     'user.money.transfer.within.bank.transfer.finalize'
@@ -293,7 +292,6 @@ class MoneyTransferController extends Controller
             // Check if OTP is required
             if ($settings->email_based_otp || $settings->sms_based_otp) {
                 MoneyTransferService::make()->processOTP(
-                    $validated['authorization_mode'],
                     $user,
                     $transactionStateInformation,
                     'user.money.transfer.other.bank.transfer.finalize'
@@ -558,7 +556,7 @@ class MoneyTransferController extends Controller
             $transactionStateInformation = [
                 'amount'                => $validated['amount'],
                 'charge'                => $charge,
-                'wire_transfer_payload' => array_diff_key($validated, array_flip(['amount', 'authorization_mode'])),
+                'wire_transfer_payload' => array_diff_key($validated, array_flip(['amount'])),
             ];
 
             $settings = bs();
@@ -566,7 +564,6 @@ class MoneyTransferController extends Controller
             // Check if OTP is required
             if ($settings->email_based_otp || $settings->sms_based_otp) {
                 MoneyTransferService::make()->processOTP(
-                    $validated['authorization_mode'],
                     $user,
                     $transactionStateInformation,
                     'user.money.transfer.wire.transfer.finalize'

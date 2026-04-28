@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Constants\ManageStatus;
 use App\Interfaces\HasInstallments;
 use App\Lib\OTPManager;
 use App\Models\Installment;
@@ -18,16 +17,19 @@ abstract class BaseService
     /**
      * Handles the whole OTP process (generation, sending, and session storage.).
      *
-     * @param string $authorizationMode
      * @param User $user
      * @param array $transactionStateInformation
      * @param string $redirectRoute
      * @return void
      * @throws RandomException
      */
-    public function processOTP(string $authorizationMode, User $user, array $transactionStateInformation, string $redirectRoute): void
+    public function processOTP(User $user, array $transactionStateInformation, string $redirectRoute): void
     {
-        $sendVia = $authorizationMode == ManageStatus::AUTHORIZATION_MODE_EMAIL ? 'email' : 'sms';
+        $sendVia = preferredOtpChannel();
+
+        if (!$sendVia) {
+            throw new Exception('OTP delivery is not configured.');
+        }
 
         OTPManager::make()->generateOTP($user->email)->sendOTP($sendVia);
 

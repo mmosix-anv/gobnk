@@ -208,18 +208,15 @@
 
                                 @if($setting->sms_based_otp || $setting->email_based_otp)
                                     <div class="form-group">
-                                        <label for="authorizationMode" class="form--label required">@lang('Authorization Mode')</label>
-                                        <select id="authorizationMode" class="form--control form--control--sm wide" name="authorization_mode" required>
-                                            <option selected disabled>@lang('Select One')</option>
-
-                                            @if($setting->email_based_otp)
-                                                <option value="{{ ManageStatus::AUTHORIZATION_MODE_EMAIL }}">@lang('Email')</option>
-                                            @endif
-
-                                            @if($setting->sms_based_otp)
-                                                <option value="{{ ManageStatus::AUTHORIZATION_MODE_SMS }}">@lang('SMS')</option>
-                                            @endif
-                                        </select>
+                                        <div class="alert alert--info mb-0">
+                                            <span class="alert__content w-100 ps-0">
+                                                @if($setting->email_based_otp)
+                                                    @lang('A verification code will be sent to your email address before transfer.')
+                                                @else
+                                                    @lang('A verification code will be sent to your mobile number before transfer.')
+                                                @endif
+                                            </span>
+                                        </div>
                                     </div>
                                 @endif
 
@@ -404,7 +401,6 @@
 
                 $('#transferMoneyModal').on('hidden.bs.modal', function () {
                     $('#transferAmount').val('')
-                    $('#authorizationMode').val('@lang("Select One")').niceSelect('update')
                 })
             })
         })(jQuery)

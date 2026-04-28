@@ -10,8 +10,12 @@ class AuthorizationController extends Controller
 {
     function authorizeForm()
     {
-        $user          = auth('web')->user();
-        $toastTemplate = null;
+        $user                = auth('web')->user();
+        $toastTemplate       = null;
+        $verificationRoute   = null;
+        $resendRoute         = null;
+        $verificationMessage = null;
+        $resendMessage       = null;
 
         if (!$user->status) {
             $pageTitle = 'Banned';
@@ -25,23 +29,38 @@ class AuthorizationController extends Controller
             $pageTitle     = 'Confirm Mobile Number';
             $toastTemplate = 'SVER_CODE';
         } elseif (!$user->tc) {
-            $pageTitle = '2FA Confirmation';
-            $type      = '2fa';
+            $type = preferredOtpChannel();
+
+            if (!$type) {
+                $user->tc = ManageStatus::VERIFIED;
+                $user->save();
+
+                return to_route('user.home');
+            }
+
+            $pageTitle         = 'Security Verification';
+            $toastTemplate     = $type === 'email' ? 'EVER_CODE' : 'SVER_CODE';
+            $verificationRoute = route('user.verify.twofactor', $type);
+            $resendRoute       = route('user.send.twofactor.code', $type);
+            $resendMessage     = $type === 'email'
+                ? 'Please check including your spam folder. If not found, then you can'
+                : 'If you don\'t receive any code, then you can';
         } else {
             return to_route('user.home');
         }
 
-        if (!$this->checkCodeValidity($user) && ($type != '2fa') && ($type != 'ban')) {
-            $user->ver_code         = verificationCode(6);
-            $user->ver_code_send_at = now();
-            $user->save();
-
-            notify($user, $toastTemplate, [
-                'code' => $user->ver_code
-            ], [$type]);
+        if (!$this->checkCodeValidity($user) && $type != 'ban') {
+            $this->issueVerificationCode($user, $toastTemplate, $type);
         }
 
-        return view("{$this->activeTheme}user.auth.authorization.$type", compact('user', 'pageTitle'));
+        return view("{$this->activeTheme}user.auth.authorization.$type", compact(
+            'user',
+            'pageTitle',
+            'verificationRoute',
+            'resendRoute',
+            'verificationMessage',
+            'resendMessage'
+        ));
     }
 
     function sendVerifyCode($type)
@@ -57,10 +76,6 @@ class AuthorizationController extends Controller
             ]);
         }
 
-        $user->ver_code         = verificationCode(6);
-        $user->ver_code_send_at = now();
-        $user->save();
-
         if ($type == 'email') {
             $type          = 'email';
             $toastTemplate = 'EVER_CODE';
@@ -69,13 +84,37 @@ class AuthorizationController extends Controller
             $toastTemplate = 'SVER_CODE';
         }
 
-        notify($user, $toastTemplate, [
-            'code' => $user->ver_code,
-        ], [$type]);
+        $this->issueVerificationCode($user, $toastTemplate, $type);
 
         $toast[] = ['success', 'The verification code has been sent successfully'];
 
         return back()->with('toasts', $toast);
+    }
+
+    function sendTwoFactorCode($type)
+    {
+        $user = auth('web')->user();
+
+        if ($type !== preferredOtpChannel() || $user->tc) {
+            return to_route('user.authorization');
+        }
+
+        if ($this->checkCodeValidity($user)) {
+            $targetTime = $user->ver_code_send_at->addMinutes(2)->timestamp;
+            $delay      = $targetTime - time();
+
+            throw ValidationException::withMessages([
+                'resend' => 'Please try again after ' . $delay . ' seconds'
+            ]);
+        }
+
+        $toastTemplate = $type === 'email' ? 'EVER_CODE' : 'SVER_CODE';
+
+        $this->issueVerificationCode($user, $toastTemplate, $type);
+
+        return back()->with('toasts', [
+            ['success', 'The verification code has been sent successfully'],
+        ]);
     }
 
     function emailVerification()
@@ -116,16 +155,28 @@ class AuthorizationController extends Controller
         ]);
     }
 
-    function g2faVerification()
+    function twoFactorVerification($type)
     {
-        $verCode  = $this->codeValidation();
-        $user     = auth('web')->user();
-        $response = verifyG2fa($user, $verCode);
+        $user = auth('web')->user();
 
-        if ($response) $toast[] = ['success', 'Successfully verified'];
-        else $toast[] = ['error', 'Wrong verification code'];
+        if ($type !== preferredOtpChannel() || $user->tc) {
+            return to_route('user.authorization');
+        }
 
-        return back()->with('toasts', $toast);
+        $verCode = $this->codeValidation();
+
+        if ($user->ver_code == $verCode) {
+            $user->tc               = ManageStatus::VERIFIED;
+            $user->ver_code         = null;
+            $user->ver_code_send_at = null;
+            $user->save();
+
+            return to_route('user.home');
+        }
+
+        throw ValidationException::withMessages([
+            'code' => 'Verification code doesn\'t match!'
+        ]);
     }
 
     protected function checkCodeValidity($user, $addMin = 2)
@@ -145,5 +196,16 @@ class AuthorizationController extends Controller
         ]);
 
         return (int)implode("", request('code'));
+    }
+
+    protected function issueVerificationCode($user, ?string $toastTemplate, string $type): void
+    {
+        $user->ver_code         = verificationCode(6);
+        $user->ver_code_send_at = now();
+        $user->save();
+
+        notify($user, $toastTemplate, [
+            'code' => $user->ver_code
+        ], [$type]);
     }
 }
