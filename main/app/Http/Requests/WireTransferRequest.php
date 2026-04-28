@@ -3,7 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Lib\FormProcessor;
-use App\Models\Form;
+use App\Models\WireTransferSettings;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -24,9 +24,8 @@ class WireTransferRequest extends FormRequest
      */
     public function rules(): array
     {
-        // Get dynamic validation rules from the FormProcessor
-        $form         = Form::where('act', '=', 'wire_transfer')->firstOrFail();
-        $dynamicRules = (new FormProcessor)->valueValidation($form->form_data);
+        $wireTransferSettings = WireTransferSettings::with('form')->firstOrFail();
+        $dynamicRules         = (new FormProcessor)->valueValidation($wireTransferSettings->form->form_data ?? []);
 
         return [
             'amount'             => 'required|numeric|gt:0',

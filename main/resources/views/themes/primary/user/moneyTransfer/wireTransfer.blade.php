@@ -68,7 +68,7 @@
                             </div>
                         </div>
 
-                        <x-phinixForm identifier="act" identifierValue="wire_transfer" />
+                        <x-phinixForm identifier="id" identifierValue="{{ $wireTransferSettings->form_id }}" />
 
                         @if($setting->sms_based_otp || $setting->email_based_otp)
                             <div class="col-12">

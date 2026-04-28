@@ -4,6 +4,7 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoanRequest;
+use App\Lib\FormProcessor;
 use App\Models\Loan;
 use App\Models\LoanPlan;
 use App\Services\LoanService;
@@ -86,10 +87,12 @@ class LoanController extends Controller
 
         // Store file temporarily if uploaded
         foreach ($formData as $field) {
-            if ($field->type == 'file' && $request->hasFile($field->label)) {
-                $uploadedFile             = $request->file($field->label);
+            $fieldKey = FormProcessor::fieldKey($field);
+
+            if ($field->type == 'file' && $request->hasFile($fieldKey)) {
+                $uploadedFile             = $request->file($fieldKey);
                 $fileName                 = uniqid() . time() . '.' . $uploadedFile->getClientOriginalExtension();
-                $validated[$field->label] = $uploadedFile->storeAs('temp_uploads', $fileName);
+                $validated[$fieldKey]     = $uploadedFile->storeAs('temp_uploads', $fileName);
             }
         }
 

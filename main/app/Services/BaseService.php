@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Interfaces\HasInstallments;
 use App\Lib\OTPManager;
+use App\Lib\FormProcessor;
 use App\Models\Installment;
 use App\Models\Setting;
 use App\Models\User;
@@ -78,11 +79,13 @@ abstract class BaseService
         $formPayload = [];
 
         foreach ($formData as $formField) {
-            if (array_key_exists($formField->label, $payload)) {
+            $fieldKey = FormProcessor::fieldKey($formField);
+
+            if (array_key_exists($fieldKey, $payload)) {
                 if ($formField->type == 'file') {
-                    $value = $this->moveFileToAssets($payload[$formField->label]);
+                    $value = $this->moveFileToAssets($payload[$fieldKey]);
                 } else {
-                    $value = $payload[$formField->label];
+                    $value = $payload[$fieldKey];
                 }
 
                 $formPayload[] = [

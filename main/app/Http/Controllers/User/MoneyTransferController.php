@@ -546,10 +546,12 @@ class MoneyTransferController extends Controller
 
             // Store file temporarily if uploaded
             foreach ($wireTransferSettings->form->form_data as $field) {
-                if ($field->type == 'file' && $request->hasFile($field->label)) {
-                    $uploadedFile             = $request->file($field->label);
+                $fieldKey = FormProcessor::fieldKey($field);
+
+                if ($field->type == 'file' && $request->hasFile($fieldKey)) {
+                    $uploadedFile             = $request->file($fieldKey);
                     $fileName                 = uniqid() . time() . '.' . $uploadedFile->getClientOriginalExtension();
-                    $validated[$field->label] = $uploadedFile->storeAs('temp_uploads', $fileName);
+                    $validated[$fieldKey]     = $uploadedFile->storeAs('temp_uploads', $fileName);
                 }
             }
 

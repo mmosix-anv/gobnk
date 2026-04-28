@@ -15,7 +15,7 @@
     @php
         $data = (object) (array) $data;
         $name = $data->name ?? $data->label ?? '';
-        $fieldName = $data->label ?? titleToKey($data->name ?? '');
+        $fieldName = \App\Lib\FormProcessor::fieldKey($data);
         $label = $data->label ?? titleToKey($data->name ?? '');
     @endphp
     <div class="{{ $wrapperClass }}">

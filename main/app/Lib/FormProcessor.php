@@ -8,6 +8,13 @@ use Exception;
 
 class FormProcessor
 {
+    public static function fieldKey(mixed $field): string
+    {
+        $field = (object) $field;
+
+        return titleToKey($field->label ?? $field->name ?? '');
+    }
+
     /**
      * Generate validation rules & messages for the custom fields of the form.
      *
@@ -103,6 +110,8 @@ class FormProcessor
         $rule           = [];
 
         foreach ($formData as $data) {
+            $fieldKey = self::fieldKey($data);
+
             if ($data->is_required == 'required') $rule = array_merge($rule, ['required']);
             else $rule = array_merge($rule, ['nullable']);
 
@@ -124,8 +133,8 @@ class FormProcessor
 
             if ($data->type == 'time') $rule = array_merge($rule, ['date_format:H:i']);
 
-            if ($data->type == 'checkbox') $validationRule[$data->label . '.*'] = $rule;
-            else $validationRule[$data->label] = $rule;
+            if ($data->type == 'checkbox') $validationRule[$fieldKey . '.*'] = $rule;
+            else $validationRule[$fieldKey] = $rule;
 
             $rule = [];
         }
@@ -147,7 +156,7 @@ class FormProcessor
         $requestForm = [];
 
         foreach ($formData as $data) {
-            $fieldName = $data->label ?? titleToKey($data->name ?? '');
+            $fieldName = self::fieldKey($data);
             $value     = $request->input($fieldName, null);
 
             // Extended fallback for different naming styles used by incoming requests
