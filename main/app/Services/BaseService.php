@@ -80,6 +80,7 @@ abstract class BaseService
 
         foreach ($formData as $formField) {
             $fieldKey = FormProcessor::fieldKey($formField);
+            $fieldName = $formField->name ?? $formField->label ?? $fieldKey;
 
             if (array_key_exists($fieldKey, $payload)) {
                 if ($formField->type == 'file') {
@@ -89,7 +90,7 @@ abstract class BaseService
                 }
 
                 $formPayload[] = [
-                    'name'  => $formField->name,
+                    'name'  => $fieldName,
                     'type'  => $formField->type,
                     'value' => $value,
                 ];

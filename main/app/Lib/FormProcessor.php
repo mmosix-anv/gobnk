@@ -156,16 +156,17 @@ class FormProcessor
         $requestForm = [];
 
         foreach ($formData as $data) {
-            $fieldName = self::fieldKey($data);
-            $value     = $request->input($fieldName, null);
+            $displayName = $data->name ?? $data->label ?? '';
+            $fieldName   = self::fieldKey($data);
+            $value       = $request->input($fieldName, null);
 
             // Extended fallback for different naming styles used by incoming requests
-            if (is_null($value) && !empty($data->name)) {
+            if (is_null($value) && !empty($displayName)) {
                 $potentialNames = array_unique([
-                    $data->name,
-                    titleToKey($data->name),
+                    $displayName,
+                    titleToKey($displayName),
                     titleToKey($data->label ?? ''),
-                    str_replace(' ', '_', strtolower($data->name)),
+                    str_replace(' ', '_', strtolower($displayName)),
                     str_replace(' ', '_', strtolower($data->label ?? '')),
                 ]);
 
@@ -197,7 +198,7 @@ class FormProcessor
             }
 
             $requestForm[] = [
-                'name'  => $data->name,
+                'name'  => $displayName,
                 'type'  => $data->type,
                 'value' => $value,
             ];
