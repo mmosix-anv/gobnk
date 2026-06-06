@@ -221,6 +221,12 @@ class MoneyTransferController extends Controller
         $otherBank->load('form');
 
         $form = $otherBank->form;
+
+        if (!$form) {
+            $form = new \App\Models\Form();
+            $form->form_data = (object) [];
+        }
+
         $formData = (array) $form->form_data;
 
         // Ensure required fields are present in the form data

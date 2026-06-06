@@ -78,7 +78,7 @@ class BeneficiaryRequest extends FormRequest
         // Dynamically add rules if 'other_bank' is filled
         if ($this->filled('other_bank')) {
             $otherBank = \App\Models\OtherBank::with('form')->active()->findOrFail($this->input('other_bank'));
-            $formData  = $otherBank->form->form_data;
+            $formData  = $otherBank->form?->form_data ?? (object)[];
 
             // Get dynamic validation rules from the FormProcessor
             $dynamicRules = (new \App\Lib\FormProcessor)->valueValidation($formData);
