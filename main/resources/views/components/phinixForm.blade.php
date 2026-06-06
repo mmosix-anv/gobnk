@@ -9,6 +9,7 @@
         $formControlClass = 'form--control';
         $selectFieldClass = 'wide';
     }
+    $formData ??= [];
 @endphp
 
 @foreach ($formData as $data)

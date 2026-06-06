@@ -223,33 +223,15 @@ class MoneyTransferController extends Controller
         $form = $otherBank->form;
 
         if (!$form) {
-            $form = new \App\Models\Form();
-            $form->form_data = (object) [];
+            $form      = new \App\Models\Form();
+            $form->act = 'other_bank';
         }
 
-        $formData = (array) $form->form_data;
+        $defaults = (array) $this->defaultBankFormData();
+        $formData = (array) ($form->form_data ?? (object) []);
 
-        // Ensure required fields are present in the form data
-        if (!isset($formData['account_name'])) {
-            $formData['account_name'] = (object) [
-                'name' => 'Account Name',
-                'label' => 'account_name',
-                'type' => 'text',
-                'is_required' => '1',
-                'extensions' => '',
-                'options' => [],
-            ];
-        }
-
-        if (!isset($formData['account_number'])) {
-            $formData['account_number'] = (object) [
-                'name' => 'Account Number',
-                'label' => 'account_number',
-                'type' => 'text',
-                'is_required' => '1',
-                'extensions' => '',
-                'options' => [],
-            ];
+        foreach ($defaults as $key => $field) {
+            $formData[$key] ??= $field;
         }
 
         $form->form_data = (object) $formData;
@@ -425,7 +407,7 @@ class MoneyTransferController extends Controller
             }
 
             $otherBank         = OtherBank::with('form')->active()->find($validated['other_bank']);
-            $processedFormData = (new FormProcessor)->processFormData($request, $otherBank->form->form_data);
+            $processedFormData = (new FormProcessor)->processFormData($request, $otherBank->form?->form_data ?? $this->defaultBankFormData());
 
             $beneficiaryableId   = $otherBank->id;
             $beneficiaryableType = OtherBank::class;
@@ -476,7 +458,7 @@ class MoneyTransferController extends Controller
                 MoneyTransferService::make()->removeExistingFiles($beneficiary->details, $request);
             }
 
-            $processedFormData = (new FormProcessor)->processFormData($request, $otherBank->form->form_data);
+            $processedFormData = (new FormProcessor)->processFormData($request, $otherBank->form?->form_data ?? $this->defaultBankFormData());
 
             if ($beneficiary->beneficiaryable_id == $validated['other_bank']) {
                 // Retain existing file values if no new file is uploaded
@@ -711,6 +693,24 @@ class MoneyTransferController extends Controller
         });
 
         return view("{$this->activeTheme}user.moneyTransfer.history", compact('pageTitle', 'user', 'moneyTransfers'));
+    }
+
+    private function defaultBankFormData(): object
+    {
+        $field = fn(string $name, string $label) => (object) [
+            'name'        => $name,
+            'label'       => $label,
+            'type'        => 'text',
+            'is_required' => 'required',
+            'extensions'  => '',
+            'options'     => [],
+        ];
+
+        return (object) [
+            'account_name'   => $field('Account Name', 'account_name'),
+            'account_number' => $field('Account Number', 'account_number'),
+            'short_name'     => $field('Short Name', 'short_name'),
+        ];
     }
 
     public function downloadMoneyTransferFile(Request $request, MoneyTransfer $moneyTransfer)
