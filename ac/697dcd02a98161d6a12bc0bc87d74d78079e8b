@@ -1,0 +1,21 @@
+main/app/Http/Requests/BeneficiaryRequest.php
+  s_3080142e9a45b4::t_ae4d993976db8c 81
+main/app/Http/Controllers/User/MoneyTransferController.php
+  s_3080142e9a45b4::t_b9b4dd3b1211b9 224-229
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.3",
+  "base_commit_sha": "ac697dcd02a98161d6a12bc0bc87d74d78079e8b",
+  "prompts": {},
+  "sessions": {
+    "s_3080142e9a45b4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "de3e5b0a-e958-4d48-a6e6-2437e00a76a5",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Moses Oyewole <moses@anvillive.com>"
+    }
+  }
+}
