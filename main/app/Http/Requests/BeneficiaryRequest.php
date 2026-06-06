@@ -89,7 +89,7 @@ class BeneficiaryRequest extends FormRequest
 
                 foreach ($dynamicRules as $field => $rule) {
                     $fallbackDynamicRules[$field] = $rule;
-                    $snakeField = \App\Http\Helpers\helpers::titleToKey($field);
+                    $snakeField = titleToKey($field);
 
                     if ($snakeField !== $field) {
                         $fallbackDynamicRules[$snakeField] = $rule;
