@@ -1,0 +1,23 @@
+main/app/Http/Requests/BeneficiaryRequest.php
+  s_3080142e9a45b4::t_99920fc04d11d9 92
+main/database/migrations/2025_03_17_000001_add_country_to_other_banks_table.php
+  s_3080142e9a45b4::t_53bb86c8aefd17 1-22
+main/database/banks_seed.sql
+  s_3080142e9a45b4::t_9a69b2feaef14c 1-621
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.3",
+  "base_commit_sha": "c59b44f7c2114ff6dea970f95c8f86a6c81d7565",
+  "prompts": {},
+  "sessions": {
+    "s_3080142e9a45b4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "de3e5b0a-e958-4d48-a6e6-2437e00a76a5",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Moses Oyewole <moses@anvillive.com>"
+    }
+  }
+}
