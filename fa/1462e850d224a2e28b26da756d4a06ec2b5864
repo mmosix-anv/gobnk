@@ -1,0 +1,25 @@
+main/resources/views/components/phinixForm.blade.php
+  s_3080142e9a45b4::t_3f5c2f142291ad 12
+main/app/Http/Controllers/User/MoneyTransferController.php
+  s_3080142e9a45b4::t_66c93aae878af3 226,230-231,233-234
+  s_3080142e9a45b4::t_fa493a39f43d92 461
+  s_3080142e9a45b4::t_0b9de2c0683d0a 410
+  s_3080142e9a45b4::t_fdf6f25dd3241f 227
+  s_3080142e9a45b4::t_f968aaea6b9191 698-715
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.3",
+  "base_commit_sha": "fa1462e850d224a2e28b26da756d4a06ec2b5864",
+  "prompts": {},
+  "sessions": {
+    "s_3080142e9a45b4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "de3e5b0a-e958-4d48-a6e6-2437e00a76a5",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Moses Oyewole <moses@anvillive.com>"
+    }
+  }
+}
